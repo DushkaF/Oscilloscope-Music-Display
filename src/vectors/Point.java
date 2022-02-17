@@ -1,7 +1,5 @@
 package vectors;
 
-import java.util.Objects;
-
 public class Point {
     private short x;
     private short y;
