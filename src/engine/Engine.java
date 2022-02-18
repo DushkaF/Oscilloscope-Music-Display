@@ -38,7 +38,7 @@ public class Engine implements Runnable{
     private final double CHANGE_PERIOD = 1 /30.0;
 
     /**
-     * Экземпляр модуля, отвечающего за чтение и вывод в консоль типа {@link Console}
+     * Экземпляр модуля типа {@link Console}, отвечающего за чтение и вывод в консоль
      */
     private Console console;
 
@@ -134,7 +134,6 @@ public class Engine implements Runnable{
     /**
      * Метод, осуществляющий загрузку параметров ввода из файла , или создание параметров ввода по умолчанию
      * @param path путь к файлу с параметрами ввода
-     * @return возвращает объект типа {@link InputArgs}, хранящий параметры ввода
      */
     public void loadInputArgs(String path){
         inputArgs=new InputArgs(path);
@@ -143,7 +142,6 @@ public class Engine implements Runnable{
     /**
      * Метод, осуществляющий загрузку параметров вывода из файла , или создание параметров вывода по умолчанию
      * @param path - путь к файлу с параметрами вывода
-     * @return возвращает объект типа {@link OutputArgs}, хранящий параметры вывода
      */
     public void loadOutputArgs(String path){
         outputArgs=new OutputArgs(path);
