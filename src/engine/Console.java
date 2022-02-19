@@ -1,7 +1,7 @@
 package engine;
 
-import input.InputArgs;
-import output.OutputArgs;
+import io.args.InputArgs;
+import io.args.OutputArgs;
 import java.util.Scanner;
 
 /**

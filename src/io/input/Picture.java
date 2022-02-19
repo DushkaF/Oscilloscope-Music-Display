@@ -1,4 +1,4 @@
-package input;
+package io.input;
 
 public class Picture {
 }

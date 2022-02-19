@@ -103,7 +103,7 @@ function focusable( element, isTabIndexNotNaN ) {
 		img = $( "img[usemap='#" + mapName + "']" )[ 0 ];
 		return !!img && visible( img );
 	}
-	return ( /^(input|select|textarea|button|object)$/.test( nodeName ) ?
+	return ( /^(io.input|select|textarea|button|object)$/.test( nodeName ) ?
 		!element.disabled :
 		"a" === nodeName ?
 			element.href || isTabIndexNotNaN :
@@ -458,7 +458,7 @@ $.widget = function( name, base, prototype ) {
 };
 
 $.widget.extend = function( target ) {
-	var input = widget_slice.call( arguments, 1 ),
+	var io.input = widget_slice.call( arguments, 1 ),
 		inputIndex = 0,
 		inputLength = input.length,
 		key,
@@ -2008,7 +2008,7 @@ var menu = $.widget( "ui.menu", {
 
 $.widget( "ui.autocomplete", {
 	version: "1.11.4",
-	defaultElement: "<input>",
+	defaultElement: "<io.input>",
 	options: {
 		appendTo: null,
 		autoFocus: false,
@@ -2060,7 +2060,7 @@ $.widget( "ui.autocomplete", {
 		this.isNewMenu = true;
 
 		this.element
-			.addClass( "ui-autocomplete-input" )
+			.addClass( "ui-autocomplete-io.input" )
 			.attr( "autocomplete", "off" );
 
 		this._on( this.element, {
@@ -2122,7 +2122,7 @@ $.widget( "ui.autocomplete", {
 					break;
 				default:
 					suppressKeyPressRepeat = true;
-					// search timeout should be triggered before the input value is changed
+					// search timeout should be triggered before the io.input value is changed
 					this._searchTimeout( event );
 					break;
 				}
@@ -2240,7 +2240,7 @@ $.widget( "ui.autocomplete", {
 
 				item = ui.item.data( "ui-autocomplete-item" );
 				if ( false !== this._trigger( "focus", event, { item: item } ) ) {
-					// use value to match what will end up in the input, if it was a key event
+					// use value to match what will end up in the io.input, if it was a key event
 					if ( event.originalEvent && /^key/.test( event.originalEvent.type ) ) {
 						this._value( item.value );
 					}
@@ -2303,7 +2303,7 @@ $.widget( "ui.autocomplete", {
 	_destroy: function() {
 		clearTimeout( this.searching );
 		this.element
-			.removeClass( "ui-autocomplete-input" )
+			.removeClass( "ui-autocomplete-io.input" )
 			.removeAttr( "autocomplete" );
 		this.menu.element.remove();
 		this.liveRegion.remove();

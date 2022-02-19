@@ -1,6 +1,6 @@
 edges
 engine
-input
+io.input
 map
-output
+io.output
 vectors

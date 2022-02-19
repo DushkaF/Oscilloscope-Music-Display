@@ -62,10 +62,10 @@ exports.decode = function(input) {
         // This is a common error: people give a data url
         // (data:image/png;base64,iVBOR...) with a {base64: true} and
         // wonders why things don't work.
-        // We can detect that the string input looks like a data url but we
+        // We can detect that the string io.input looks like a data url but we
         // *can't* be sure it is one: removing everything up to the comma would
         // be too dangerous.
-        throw new Error("Invalid base64 input, it looks like a data url.");
+        throw new Error("Invalid base64 io.input, it looks like a data url.");
     }
 
     input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
@@ -80,11 +80,11 @@ exports.decode = function(input) {
     if (totalLength % 1 !== 0) {
         // totalLength is not an integer, the length does not match a valid
         // base64 content. That can happen if:
-        // - the input is not a base64 content
-        // - the input is *almost* a base64 content, with a extra chars at the
+        // - the io.input is not a base64 content
+        // - the io.input is *almost* a base64 content, with a extra chars at the
         //   beginning or at the end
-        // - the input uses a base64 variant (base64url for example)
-        throw new Error("Invalid base64 input, bad content length.");
+        // - the io.input uses a base64 variant (base64url for example)
+        throw new Error("Invalid base64 io.input, bad content length.");
     }
     var output;
     if (support.uint8array) {
@@ -1163,7 +1163,7 @@ var GenericWorker = require('../stream/GenericWorker');
  * @param {Readable} stream the nodejs stream.
  */
 function NodejsStreamInputAdapter(filename, stream) {
-    GenericWorker.call(this, "Nodejs stream input adapter for " + filename);
+    GenericWorker.call(this, "Nodejs stream io.input adapter for " + filename);
     this._upstreamEnded = false;
     this._bindStream(stream);
 }
@@ -1668,7 +1668,7 @@ var out = {
           }
 
           if (!opts.type) {
-            throw new Error("No output type specified.");
+            throw new Error("No io.output type specified.");
           }
 
           utils.checkSupport(opts.type);
@@ -2624,7 +2624,7 @@ function StreamHelper(worker, outputType, mimeType) {
     try {
         // the type used internally
         this._internalType = internalType;
-        // the type used to output results
+        // the type used to io.output results
         this._outputType = outputType;
         // the mime type
         this._mimeType = mimeType;
@@ -3095,8 +3095,8 @@ exports.newBlob = function(part, type) {
 };
 /**
  * The identity function.
- * @param {Object} input the input.
- * @return {Object} the same input.
+ * @param {Object} input the io.input.
+ * @return {Object} the same io.input.
  */
 function identity(input) {
     return input;
@@ -3324,12 +3324,12 @@ transform["nodebuffer"] = {
 };
 
 /**
- * Transform an input into any type.
- * The supported output type are : string, array, uint8array, arraybuffer, nodebuffer.
- * If no output type is specified, the unmodified input will be returned.
- * @param {String} outputType the output type.
- * @param {String|Array|ArrayBuffer|Uint8Array|Buffer} input the input to convert.
- * @throws {Error} an Error if the browser doesn't support the requested output type.
+ * Transform an io.input into any type.
+ * The supported io.output type are : string, array, uint8array, arraybuffer, nodebuffer.
+ * If no io.output type is specified, the unmodified io.input will be returned.
+ * @param {String} outputType the io.output type.
+ * @param {String|Array|ArrayBuffer|Uint8Array|Buffer} input the io.input to convert.
+ * @throws {Error} an Error if the browser doesn't support the requested io.output type.
  */
 exports.transformTo = function(outputType, input) {
     if (!input) {
@@ -3347,10 +3347,10 @@ exports.transformTo = function(outputType, input) {
 };
 
 /**
- * Return the type of the input.
+ * Return the type of the io.input.
  * The type will be in a format valid for JSZip.utils.transformTo : string, array, uint8array, arraybuffer.
- * @param {Object} input the input to identify.
- * @return {String} the (lowercase) type of the input.
+ * @param {Object} input the io.input to identify.
+ * @return {String} the (lowercase) type of the io.input.
  */
 exports.getTypeOf = function(input) {
     if (typeof input === "string") {
@@ -4105,7 +4105,7 @@ ZipObject.prototype = {
         var result = null, outputType = "string";
         try {
             if (!type) {
-                throw new Error("No output type specified.");
+                throw new Error("No io.output type specified.");
             }
             outputType = type.toLowerCase();
             var askUnicodeString = outputType === "string" || outputType === "text";
@@ -4468,7 +4468,7 @@ module.exports = {
   clear: clearTask
 };
 },{"./_cof":39,"./_ctx":41,"./_dom-create":43,"./_global":46,"./_html":48,"./_invoke":50}],55:[function(require,module,exports){
-// 7.1.1 ToPrimitive(input [, PreferredType])
+// 7.1.1 ToPrimitive(io.input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
@@ -4873,7 +4873,7 @@ var Z_DEFLATED  = 8;
 /* internal
  * Deflate.chunks -> Array
  *
- * Chunks of output data, if [[Deflate#onData]] not overriden.
+ * Chunks of io.output data, if [[Deflate#onData]] not overriden.
  **/
 
 /**
@@ -5023,12 +5023,12 @@ function Deflate(options) {
 
 /**
  * Deflate#push(data[, mode]) -> Boolean
- * - data (Uint8Array|Array|ArrayBuffer|String): input data. Strings will be
+ * - data (Uint8Array|Array|ArrayBuffer|String): io.input data. Strings will be
  *   converted to utf8 byte sequence.
  * - mode (Number|Boolean): 0..6 for corresponding Z_NO_FLUSH..Z_TREE modes.
  *   See constants. Skipped or `false` means Z_NO_FLUSH, `true` meansh Z_FINISH.
  *
- * Sends input data to deflate pipe, generating [[Deflate#onData]] calls with
+ * Sends io.input data to deflate pipe, generating [[Deflate#onData]] calls with
  * new compressed chunks. Returns `true` on success. The last data block must have
  * mode Z_FINISH (or `true`). That will flush internal pending buffers and call
  * [[Deflate#onEnd]]. For interim explicit flushes (without ending the stream) you
@@ -5036,7 +5036,7 @@ function Deflate(options) {
  *
  * On fail call [[Deflate#onEnd]] with error code and return false.
  *
- * We strongly recommend to use `Uint8Array` on input for best speed (output
+ * We strongly recommend to use `Uint8Array` on io.input for best speed (io.output
  * array format is detected automatically). Also, don't skip last param and always
  * use the same type in your code (boolean or number). That will improve JS speed.
  *
@@ -5116,7 +5116,7 @@ Deflate.prototype.push = function (data, mode) {
 /**
  * Deflate#onData(chunk) -> Void
  * - chunk (Uint8Array|Array|String): ouput data. Type of array depends
- *   on js engine support. When string output requested, each chunk
+ *   on js engine support. When string io.output requested, each chunk
  *   will be string.
  *
  * By default, stores data blocks in `chunks[]` property and glue
@@ -5132,7 +5132,7 @@ Deflate.prototype.onData = function (chunk) {
  * - status (Number): deflate status. 0 (Z_OK) on success,
  *   other if not.
  *
- * Called once after you tell deflate that the input stream is
+ * Called once after you tell deflate that the io.input stream is
  * complete (Z_FINISH) or should be flushed (Z_SYNC_FLUSH)
  * or if an error happened. By default - join collected chunks,
  * free memory and fill `results` / `err` properties.
@@ -5154,7 +5154,7 @@ Deflate.prototype.onEnd = function (status) {
 
 /**
  * deflate(data[, options]) -> Uint8Array|Array|String
- * - data (Uint8Array|Array|String): input data to compress.
+ * - data (Uint8Array|Array|String): io.input data to compress.
  * - options (Object): zlib deflate options.
  *
  * Compress `data` with deflate algorithm and `options`.
@@ -5200,7 +5200,7 @@ function deflate(input, options) {
 
 /**
  * deflateRaw(data[, options]) -> Uint8Array|Array|String
- * - data (Uint8Array|Array|String): input data to compress.
+ * - data (Uint8Array|Array|String): io.input data to compress.
  * - options (Object): zlib deflate options.
  *
  * The same as [[deflate]], but creates raw data, without wrapper
@@ -5215,7 +5215,7 @@ function deflateRaw(input, options) {
 
 /**
  * gzip(data[, options]) -> Uint8Array|Array|String
- * - data (Uint8Array|Array|String): input data to compress.
+ * - data (Uint8Array|Array|String): io.input data to compress.
  * - options (Object): zlib deflate options.
  *
  * The same as [[deflate]], but create gzip wrapper instead of
@@ -5258,7 +5258,7 @@ var toString = Object.prototype.toString;
 /* internal
  * inflate.chunks -> Array
  *
- * Chunks of output data, if [[Inflate#onData]] not overriden.
+ * Chunks of io.output data, if [[Inflate#onData]] not overriden.
  **/
 
 /**
@@ -5303,7 +5303,7 @@ var toString = Object.prototype.toString;
  * - `chunkSize` - size of generated data chunks (16K by default)
  * - `raw` (Boolean) - do raw inflate
  * - `to` (String) - if equal to 'string', then result will be converted
- *   from utf8 to utf16 (javascript) string. When string output requested,
+ *   from utf8 to utf16 (javascript) string. When string io.output requested,
  *   chunk length can differ from `chunkSize`, depending on content.
  *
  * By default, when no options set, autodetect deflate/gzip data format via
@@ -5384,19 +5384,19 @@ function Inflate(options) {
 
 /**
  * Inflate#push(data[, mode]) -> Boolean
- * - data (Uint8Array|Array|ArrayBuffer|String): input data
+ * - data (Uint8Array|Array|ArrayBuffer|String): io.input data
  * - mode (Number|Boolean): 0..6 for corresponding Z_NO_FLUSH..Z_TREE modes.
  *   See constants. Skipped or `false` means Z_NO_FLUSH, `true` meansh Z_FINISH.
  *
- * Sends input data to inflate pipe, generating [[Inflate#onData]] calls with
- * new output chunks. Returns `true` on success. The last data block must have
+ * Sends io.input data to inflate pipe, generating [[Inflate#onData]] calls with
+ * new io.output chunks. Returns `true` on success. The last data block must have
  * mode Z_FINISH (or `true`). That will flush internal pending buffers and call
  * [[Inflate#onEnd]]. For interim explicit flushes (without ending the stream) you
  * can use mode Z_SYNC_FLUSH, keeping the decompression context.
  *
  * On fail call [[Inflate#onEnd]] with error code and return false.
  *
- * We strongly recommend to use `Uint8Array` on input for best speed (output
+ * We strongly recommend to use `Uint8Array` on io.input for best speed (io.output
  * format is detected automatically). Also, don't skip last param and always
  * use the same type in your code (boolean or number). That will improve JS speed.
  *
@@ -5419,7 +5419,7 @@ Inflate.prototype.push = function (data, mode) {
   var dict;
 
   // Flag to properly process Z_BUF_ERROR on testing inflate call
-  // when we check that all output data was flushed.
+  // when we check that all io.output data was flushed.
   var allowBufError = false;
 
   if (this.ended) { return false; }
@@ -5495,9 +5495,9 @@ Inflate.prototype.push = function (data, mode) {
       }
     }
 
-    // When no more input data, we should check that internal inflate buffers
+    // When no more io.input data, we should check that internal inflate buffers
     // are flushed. The only way to do it when avail_out = 0 - run one more
-    // inflate pass. But if output data not exists, inflate return Z_BUF_ERROR.
+    // inflate pass. But if io.output data not exists, inflate return Z_BUF_ERROR.
     // Here we set flag to process this error properly.
     //
     // NOTE. Deflate does not return error in this case and does not needs such
@@ -5534,7 +5534,7 @@ Inflate.prototype.push = function (data, mode) {
 /**
  * Inflate#onData(chunk) -> Void
  * - chunk (Uint8Array|Array|String): ouput data. Type of array depends
- *   on js engine support. When string output requested, each chunk
+ *   on js engine support. When string io.output requested, each chunk
  *   will be string.
  *
  * By default, stores data blocks in `chunks[]` property and glue
@@ -5550,7 +5550,7 @@ Inflate.prototype.onData = function (chunk) {
  * - status (Number): inflate status. 0 (Z_OK) on success,
  *   other if not.
  *
- * Called either after you tell inflate that the input stream is
+ * Called either after you tell inflate that the io.input stream is
  * complete (Z_FINISH) or should be flushed (Z_SYNC_FLUSH)
  * or if an error happened. By default - join collected chunks,
  * free memory and fill `results` / `err` properties.
@@ -5574,7 +5574,7 @@ Inflate.prototype.onEnd = function (status) {
 
 /**
  * inflate(data[, options]) -> Uint8Array|Array|String
- * - data (Uint8Array|Array|String): input data to decompress.
+ * - data (Uint8Array|Array|String): io.input data to decompress.
  * - options (Object): zlib inflate options.
  *
  * Decompress `data` with inflate/ungzip and `options`. Autodetect
@@ -5593,7 +5593,7 @@ Inflate.prototype.onEnd = function (status) {
  * - `raw` (Boolean) - say that we work with raw stream, if you don't wish to specify
  *   negative windowBits implicitly.
  * - `to` (String) - if equal to 'string', then result will be converted
- *   from utf8 to utf16 (javascript) string. When string output requested,
+ *   from utf8 to utf16 (javascript) string. When string io.output requested,
  *   chunk length can differ from `chunkSize`, depending on content.
  *
  *
@@ -5601,11 +5601,11 @@ Inflate.prototype.onEnd = function (status) {
  *
  * ```javascript
  * var pako = require('pako')
- *   , input = pako.deflate([1,2,3,4,5,6,7,8,9])
- *   , output;
+ *   , io.input = pako.deflate([1,2,3,4,5,6,7,8,9])
+ *   , io.output;
  *
  * try {
- *   output = pako.inflate(input);
+ *   io.output = pako.inflate(io.input);
  * } catch (err)
  *   console.log(err);
  * }
@@ -5625,7 +5625,7 @@ function inflate(input, options) {
 
 /**
  * inflateRaw(data[, options]) -> Uint8Array|Array|String
- * - data (Uint8Array|Array|String): input data to decompress.
+ * - data (Uint8Array|Array|String): io.input data to decompress.
  * - options (Object): zlib inflate options.
  *
  * The same as [[inflate]], but creates raw data, without wrapper
@@ -5640,7 +5640,7 @@ function inflateRaw(input, options) {
 
 /**
  * ungzip(data[, options]) -> Uint8Array|Array|String
- * - data (Uint8Array|Array|String): input data to decompress.
+ * - data (Uint8Array|Array|String): io.input data to decompress.
  * - options (Object): zlib inflate options.
  *
  * Just shortcut to [[inflate]], because it autodetects format
@@ -6246,10 +6246,10 @@ var HCRC_STATE = 103;
 var BUSY_STATE = 113;
 var FINISH_STATE = 666;
 
-var BS_NEED_MORE      = 1; /* block not completed, need more input or more output */
+var BS_NEED_MORE      = 1; /* block not completed, need more io.input or more io.output */
 var BS_BLOCK_DONE     = 2; /* block flush performed */
-var BS_FINISH_STARTED = 3; /* finish started, need only more output at next deflate */
-var BS_FINISH_DONE    = 4; /* finish done, accept no more input or output */
+var BS_FINISH_STARTED = 3; /* finish started, need only more io.output at next deflate */
+var BS_FINISH_DONE    = 4; /* finish done, accept no more io.input or io.output */
 
 var OS_CODE = 0x03; // Unix :) . Don't detect, use this default.
 
@@ -6266,9 +6266,9 @@ function zero(buf) { var len = buf.length; while (--len >= 0) { buf[len] = 0; } 
 
 
 /* =========================================================================
- * Flush as much pending output as possible. All deflate() output goes
+ * Flush as much pending io.output as possible. All deflate() io.output goes
  * through this function so some applications may wish to modify it
- * to avoid allocating a large strm->output buffer and copying into it.
+ * to avoid allocating a large strm->io.output buffer and copying into it.
  * (See also read_buf()).
  */
 function flush_pending(strm) {
@@ -6319,10 +6319,10 @@ function putShortMSB(s, b) {
 
 
 /* ===========================================================================
- * Read a new buffer from the current input stream, update the adler32
- * and total number of bytes read.  All deflate() input goes through
+ * Read a new buffer from the current io.input stream, update the adler32
+ * and total number of bytes read.  All deflate() io.input goes through
  * this function so some applications may wish to modify it to avoid
- * allocating a large strm->input buffer and copying from it.
+ * allocating a large strm->io.input buffer and copying from it.
  * (See also flush_pending()).
  */
 function read_buf(strm, buf, start, size) {
@@ -6391,7 +6391,7 @@ function longest_match(s, cur_match) {
   if (s.prev_length >= s.good_match) {
     chain_length >>= 2;
   }
-  /* Do not look for matches beyond the end of the input. This is necessary
+  /* Do not look for matches beyond the end of the io.input. This is necessary
    * to make deflate deterministic.
    */
   if (nice_match > s.lookahead) { nice_match = s.lookahead; }
@@ -6408,7 +6408,7 @@ function longest_match(s, cur_match) {
      * reasons.  Therefore uninitialized memory will be accessed, and
      * conditional jumps will be made that depend on those values.
      * However the length of the match is limited to the lookahead, so
-     * the output of deflate is not affected by the uninitialized values.
+     * the io.output of deflate is not affected by the uninitialized values.
      */
 
     if (_win[match + best_len]     !== scan_end  ||
@@ -6489,7 +6489,7 @@ function fill_window(s) {
     //
     //  } else if (more == (unsigned)(-1)) {
     //        /* Very unlikely, but possible on 16 bit machine if
-    //         * strstart == 0 && lookahead == 1 (input done a byte at time)
+    //         * strstart == 0 && lookahead == 1 (io.input done a byte at time)
     //         */
     //        more--;
     //    }
@@ -6552,7 +6552,7 @@ function fill_window(s) {
     n = read_buf(s.strm, s.window, s.strstart + s.lookahead, more);
     s.lookahead += n;
 
-    /* Initialize the hash value now that we have some input: */
+    /* Initialize the hash value now that we have some io.input: */
     if (s.lookahead + s.insert >= MIN_MATCH) {
       str = s.strstart - s.insert;
       s.ins_h = s.window[str];
@@ -6575,7 +6575,7 @@ function fill_window(s) {
         }
       }
     }
-    /* If the whole input has less than MIN_MATCH bytes, ins_h is garbage,
+    /* If the whole io.input has less than MIN_MATCH bytes, ins_h is garbage,
      * but this is not important since only literal bytes will be emitted.
      */
 
@@ -6620,7 +6620,7 @@ function fill_window(s) {
 }
 
 /* ===========================================================================
- * Copy without compression as much as possible from the input stream, return
+ * Copy without compression as much as possible from the io.input stream, return
  * the current block state.
  * This function does not insert new strings in the dictionary since
  * uncompressible data is probably not useful. This function is used
@@ -6638,7 +6638,7 @@ function deflate_stored(s, flush) {
     max_block_size = s.pending_buf_size - 5;
   }
 
-  /* Copy as much as possible from input to output: */
+  /* Copy as much as possible from io.input to io.output: */
   for (;;) {
     /* Fill the window as much as possible: */
     if (s.lookahead <= 1) {
@@ -6720,7 +6720,7 @@ function deflate_stored(s, flush) {
 }
 
 /* ===========================================================================
- * Compress as much as possible from the input stream, return the current
+ * Compress as much as possible from the io.input stream, return the current
  * block state.
  * This function does not perform lazy evaluation of matches and inserts
  * new strings in the dictionary only for unmatched strings or for short
@@ -6732,7 +6732,7 @@ function deflate_fast(s, flush) {
 
   for (;;) {
     /* Make sure that we always have enough lookahead, except
-     * at the end of the input file. We need MAX_MATCH bytes
+     * at the end of the io.input file. We need MAX_MATCH bytes
      * for the next match, plus MIN_MATCH bytes to insert the
      * string following the next match.
      */
@@ -6764,7 +6764,7 @@ function deflate_fast(s, flush) {
     if (hash_head !== 0/*NIL*/ && ((s.strstart - hash_head) <= (s.w_size - MIN_LOOKAHEAD))) {
       /* To simplify the code, we prevent matches with the string
        * of window index 0 (in particular we have to avoid a match
-       * of the string with itself at the start of the input file).
+       * of the string with itself at the start of the io.input file).
        */
       s.match_length = longest_match(s, hash_head);
       /* longest_match() sets match_start */
@@ -6811,7 +6811,7 @@ function deflate_fast(s, flush) {
          */
       }
     } else {
-      /* No match, output a literal byte */
+      /* No match, io.output a literal byte */
       //Tracevv((stderr,"%c", s.window[s.strstart]));
       /*** _tr_tally_lit(s, s.window[s.strstart], bflush); ***/
       bflush = trees._tr_tally(s, 0, s.window[s.strstart]);
@@ -6860,10 +6860,10 @@ function deflate_slow(s, flush) {
 
   var max_insert;
 
-  /* Process the input block. */
+  /* Process the io.input block. */
   for (;;) {
     /* Make sure that we always have enough lookahead, except
-     * at the end of the input file. We need MAX_MATCH bytes
+     * at the end of the io.input file. We need MAX_MATCH bytes
      * for the next match, plus MIN_MATCH bytes to insert the
      * string following the next match.
      */
@@ -6897,7 +6897,7 @@ function deflate_slow(s, flush) {
         s.strstart - hash_head <= (s.w_size - MIN_LOOKAHEAD)/*MAX_DIST(s)*/) {
       /* To simplify the code, we prevent matches with the string
        * of window index 0 (in particular we have to avoid a match
-       * of the string with itself at the start of the input file).
+       * of the string with itself at the start of the io.input file).
        */
       s.match_length = longest_match(s, hash_head);
       /* longest_match() sets match_start */
@@ -6912,7 +6912,7 @@ function deflate_slow(s, flush) {
       }
     }
     /* If there was a match at the previous step and the current
-     * match is not better, output the previous match:
+     * match is not better, io.output the previous match:
      */
     if (s.prev_length >= MIN_MATCH && s.match_length <= s.prev_length) {
       max_insert = s.strstart + s.lookahead - MIN_MATCH;
@@ -6953,7 +6953,7 @@ function deflate_slow(s, flush) {
       }
 
     } else if (s.match_available) {
-      /* If there was no match at the previous position, output a
+      /* If there was no match at the previous position, io.output a
        * single literal. If there was a match but the current match
        * is longer, truncate the previous match to a single literal.
        */
@@ -7025,7 +7025,7 @@ function deflate_rle(s, flush) {
 
   for (;;) {
     /* Make sure that we always have enough lookahead, except
-     * at the end of the input file. We need MAX_MATCH bytes
+     * at the end of the io.input file. We need MAX_MATCH bytes
      * for the longest run, plus one for the unrolled loop.
      */
     if (s.lookahead <= MAX_MATCH) {
@@ -7069,7 +7069,7 @@ function deflate_rle(s, flush) {
       s.strstart += s.match_length;
       s.match_length = 0;
     } else {
-      /* No match, output a literal byte */
+      /* No match, io.output a literal byte */
       //Tracevv((stderr,"%c", s->window[s->strstart]));
       /*** _tr_tally_lit(s, s.window[s.strstart], bflush); ***/
       bflush = trees._tr_tally(s, 0, s.window[s.strstart]);
@@ -7223,9 +7223,9 @@ function lm_init(s) {
 function DeflateState() {
   this.strm = null;            /* pointer back to this zlib stream */
   this.status = 0;            /* as the name implies */
-  this.pending_buf = null;      /* output still pending */
+  this.pending_buf = null;      /* io.output still pending */
   this.pending_buf_size = 0;  /* size of pending_buf */
-  this.pending_out = 0;       /* next pending byte to output to the stream */
+  this.pending_out = 0;       /* next pending byte to io.output to the stream */
   this.pending = 0;           /* nb of bytes in the pending buffer */
   this.wrap = 0;              /* bit 0 true for zlib, bit 1 true for gzip */
   this.gzhead = null;         /* gzip header information to write */
@@ -7246,7 +7246,7 @@ function DeflateState() {
    */
 
   this.window_size = 0;
-  /* Actual size of window: 2*wSize, except when the user input buffer
+  /* Actual size of window: 2*wSize, except when the user io.input buffer
    * is directly used as sliding window.
    */
 
@@ -7264,14 +7264,14 @@ function DeflateState() {
   this.hash_mask = 0;   /* hash_size-1 */
 
   this.hash_shift = 0;
-  /* Number of bits by which ins_h must be shifted at each input
+  /* Number of bits by which ins_h must be shifted at each io.input
    * step. It must be such that after MIN_MATCH steps, the oldest
    * byte no longer takes part in the hash key, that is:
    *   hash_shift * MIN_MATCH >= hash_bits
    */
 
   this.block_start = 0;
-  /* Window position at the beginning of the current output block. Gets
+  /* Window position at the beginning of the current io.output block. Gets
    * negative when the window is moved backwards.
    */
 
@@ -7359,15 +7359,15 @@ function DeflateState() {
   /* Size of match buffer for literals/lengths.  There are 4 reasons for
    * limiting lit_bufsize to 64K:
    *   - frequencies can be kept in 16 bit counters
-   *   - if compression is not successful for the first block, all input
+   *   - if compression is not successful for the first block, all io.input
    *     data is still in the window so we can still emit a stored block even
-   *     when input comes from standard input.  (This can also be done for
+   *     when io.input comes from standard io.input.  (This can also be done for
    *     all blocks if lit_bufsize is not greater than 32K.)
    *   - if compression is not successful for a file smaller than 64K, we can
    *     even emit a stored file instead of a stored block (saving 5 bytes).
    *     This is applicable only for zip (not gzip or zlib).
    *   - creating new Huffman trees less frequently may not provide fast
-   *     adaptation to changes in the input data statistics. (Take for
+   *     adaptation to changes in the io.input data statistics. (Take for
    *     example a binary file with poorly compressible code followed by
    *     a highly compressible string table.) Smaller buffer sizes give
    *     fast adaptation but have of course the overhead of transmitting
@@ -7403,7 +7403,7 @@ function DeflateState() {
   //this.high_water = 0;
   /* High water mark offset in window for initialized bytes -- bytes above
    * this are set to zero in order to avoid memory check warnings when
-   * longest match routines access bytes past the input.  This is then
+   * longest match routines access bytes past the io.input.  This is then
    * updated to the new high water mark.
    */
 }
@@ -7759,12 +7759,12 @@ function deflate(strm, flush) {
   }
 //#endif
 
-  /* Flush as much pending output as possible */
+  /* Flush as much pending io.output as possible */
   if (s.pending !== 0) {
     flush_pending(strm);
     if (strm.avail_out === 0) {
       /* Since avail_out is 0, deflate will be called again with
-       * more output space, but possibly with both pending and
+       * more io.output space, but possibly with both pending and
        * avail_in equal to zero. There won't be anything to do,
        * but this is not an error situation so make sure we
        * return OK instead of BUF_ERROR at next call of deflate:
@@ -7782,7 +7782,7 @@ function deflate(strm, flush) {
     return err(strm, Z_BUF_ERROR);
   }
 
-  /* User must not provide more input after the first FINISH: */
+  /* User must not provide more io.input after the first FINISH: */
   if (s.status === FINISH_STATE && strm.avail_in !== 0) {
     return err(strm, Z_BUF_ERROR);
   }
@@ -7806,9 +7806,9 @@ function deflate(strm, flush) {
       return Z_OK;
       /* If flush != Z_NO_FLUSH && avail_out == 0, the next call
        * of deflate should use the same flush parameter to make sure
-       * that the flush is complete. So we don't have to output an
+       * that the flush is complete. So we don't have to io.output an
        * empty block here, this will be done at next call. This also
-       * ensures that for a very small output buffer, we emit at most
+       * ensures that for a very small io.output buffer, we emit at most
        * one empty block.
        */
     }
@@ -7899,7 +7899,7 @@ function deflateEnd(strm) {
 
 /* =========================================================================
  * Initializes the compression dictionary from the given byte
- * sequence without producing any compressed output.
+ * sequence without producing any compressed io.output.
  */
 function deflateSetDictionary(strm, dictionary) {
   var dictLength = dictionary.length;
@@ -8092,10 +8092,10 @@ var TYPE = 12;      /* i: waiting for type bits, including last-flag bit */
 
 /*
    Decode literal, length, and distance codes and write out the resulting
-   literal and match bytes until either not enough input or output is
+   literal and match bytes until either not enough io.input or io.output is
    available, an end-of-block is encountered, or a data error is encountered.
-   When large enough input and output buffers are supplied to inflate(), for
-   example, a 16K input buffer and a 64K output buffer, more than 95% of the
+   When large enough io.input and io.output buffers are supplied to inflate(), for
+   example, a 16K io.input buffer and a 64K io.output buffer, more than 95% of the
    inflate execution time is spent in this routine.
 
    Entry assumptions:
@@ -8108,29 +8108,29 @@ var TYPE = 12;      /* i: waiting for type bits, including last-flag bit */
 
    On return, state.mode is one of:
 
-        LEN -- ran out of enough output space or enough available input
+        LEN -- ran out of enough io.output space or enough available io.input
         TYPE -- reached end of block code, inflate() to interpret next block
         BAD -- error in block data
 
    Notes:
 
-    - The maximum input bits used by a length/distance pair is 15 bits for the
+    - The maximum io.input bits used by a length/distance pair is 15 bits for the
       length code, 5 bits for the length extra, 15 bits for the distance code,
       and 13 bits for the distance extra.  This totals 48 bits, or six bytes.
-      Therefore if strm.avail_in >= 6, then there is enough input to avoid
-      checking for available input while decoding.
+      Therefore if strm.avail_in >= 6, then there is enough io.input to avoid
+      checking for available io.input while decoding.
 
-    - The maximum bytes that a single length/distance pair can output is 258
+    - The maximum bytes that a single length/distance pair can io.output is 258
       bytes, which is the maximum length that can be coded.  inflate_fast()
       requires strm.avail_out >= 258 for each loop to avoid checking for
-      output space.
+      io.output space.
  */
 module.exports = function inflate_fast(strm, start) {
   var state;
-  var _in;                    /* local strm.input */
-  var last;                   /* have enough input while in < last */
-  var _out;                   /* local strm.output */
-  var beg;                    /* inflate()'s initial strm.output */
+  var _in;                    /* local strm.io.input */
+  var last;                   /* have enough io.input while in < last */
+  var _out;                   /* local strm.io.output */
+  var beg;                    /* inflate()'s initial strm.io.output */
   var end;                    /* while out < end, enough space available */
 //#ifdef INFLATE_STRICT
   var dmax;                   /* maximum distance from zlib header */
@@ -8183,7 +8183,7 @@ module.exports = function inflate_fast(strm, start) {
 
 
   /* decode literals and length/distances until end-of-block or not enough
-     input data or output space */
+     io.input data or io.output space */
 
   top:
   do {
@@ -8258,7 +8258,7 @@ module.exports = function inflate_fast(strm, start) {
             hold >>>= op;
             bits -= op;
             //Tracevv((stderr, "inflate:         distance %u\n", dist));
-            op = _out - beg;                /* max distance in output */
+            op = _out - beg;                /* max distance in io.output */
             if (dist > op) {                /* see if copy from window */
               op = dist - op;               /* distance back in window */
               if (op > whave) {
@@ -8273,18 +8273,18 @@ module.exports = function inflate_fast(strm, start) {
 //#ifdef INFLATE_ALLOW_INVALID_DISTANCE_TOOFAR_ARRR
 //                if (len <= op - whave) {
 //                  do {
-//                    output[_out++] = 0;
+//                    io.output[_out++] = 0;
 //                  } while (--len);
 //                  continue top;
 //                }
 //                len -= op - whave;
 //                do {
-//                  output[_out++] = 0;
+//                  io.output[_out++] = 0;
 //                } while (--op > whave);
 //                if (op === 0) {
 //                  from = _out - dist;
 //                  do {
-//                    output[_out++] = output[from++];
+//                    io.output[_out++] = io.output[from++];
 //                  } while (--len);
 //                  continue top;
 //                }
@@ -8299,7 +8299,7 @@ module.exports = function inflate_fast(strm, start) {
                   do {
                     output[_out++] = s_window[from++];
                   } while (--op);
-                  from = _out - dist;  /* rest from output */
+                  from = _out - dist;  /* rest from io.output */
                   from_source = output;
                 }
               }
@@ -8318,7 +8318,7 @@ module.exports = function inflate_fast(strm, start) {
                     do {
                       output[_out++] = s_window[from++];
                     } while (--op);
-                    from = _out - dist;      /* rest from output */
+                    from = _out - dist;      /* rest from io.output */
                     from_source = output;
                   }
                 }
@@ -8330,7 +8330,7 @@ module.exports = function inflate_fast(strm, start) {
                   do {
                     output[_out++] = s_window[from++];
                   } while (--op);
-                  from = _out - dist;  /* rest from output */
+                  from = _out - dist;  /* rest from io.output */
                   from_source = output;
                 }
               }
@@ -8348,7 +8348,7 @@ module.exports = function inflate_fast(strm, start) {
               }
             }
             else {
-              from = _out - dist;          /* copy direct from output */
+              from = _out - dist;          /* copy direct from io.output */
               do {                        /* minimum length is three */
                 output[_out++] = output[from++];
                 output[_out++] = output[from++];
@@ -8493,7 +8493,7 @@ var        TYPE = 12;      /* i: waiting for type bits, including last-flag bit 
 var        TYPEDO = 13;    /* i: same, but skip check to exit inflate on new block */
 var        STORED = 14;    /* i: waiting for stored size (length and complement) */
 var        COPY_ = 15;     /* i/o: same as COPY below, but only first time in */
-var        COPY = 16;      /* i/o: waiting for input or output to copy stored block */
+var        COPY = 16;      /* i/o: waiting for io.input or io.output to copy stored block */
 var        TABLE = 17;     /* i: waiting for dynamic block table lengths */
 var        LENLENS = 18;   /* i: waiting for code length code lengths */
 var        CODELENS = 19;  /* i: waiting for length/lit and distance code lengths */
@@ -8502,8 +8502,8 @@ var            LEN = 21;       /* i: waiting for length/lit/eob code */
 var            LENEXT = 22;    /* i: waiting for length extra bits */
 var            DIST = 23;      /* i: waiting for distance code */
 var            DISTEXT = 24;   /* i: waiting for distance extra bits */
-var            MATCH = 25;     /* o: waiting for output space to copy string */
-var            LIT = 26;       /* o: waiting for output space to write literal */
+var            MATCH = 25;     /* o: waiting for io.output space to copy string */
+var            LIT = 26;       /* o: waiting for io.output space to write literal */
 var    CHECK = 27;     /* i: waiting for 32-bit check value */
 var    LENGTH = 28;    /* i: waiting for 32-bit length (gzip) */
 var    DONE = 29;      /* finished check, done -- remain here until reset */
@@ -8540,7 +8540,7 @@ function InflateState() {
   this.flags = 0;             /* gzip header method and flags (0 if zlib) */
   this.dmax = 0;              /* zlib header max distance (INFLATE_STRICT) */
   this.check = 0;             /* protected copy of check value */
-  this.total = 0;             /* protected copy of output count */
+  this.total = 0;             /* protected copy of io.output count */
   // TODO: may be {}
   this.head = null;           /* where to save gzip header information */
 
@@ -8552,7 +8552,7 @@ function InflateState() {
   this.window = null;         /* allocated sliding window, if needed */
 
   /* bit accumulator */
-  this.hold = 0;              /* input bit accumulator */
+  this.hold = 0;              /* io.input bit accumulator */
   this.bits = 0;              /* number of bits in "in" */
 
   /* for string and stored block copying */
@@ -8739,15 +8739,15 @@ function fixedtables(state) {
 /*
  Update the window with the last wsize (normally 32K) bytes written before
  returning.  If window does not exist yet, create it.  This is only called
- when a window is already in use, or when output has been written during this
+ when a window is already in use, or when io.output has been written during this
  inflate call, but the end of the deflate stream has not been reached yet.
  It is also called to create a window for dictionary data when a dictionary
  is loaded.
 
- Providing output buffers larger than 32K to inflate() should provide a speed
- advantage, since only the last 32K of output is copied to the sliding window
+ Providing io.output buffers larger than 32K to inflate() should provide a speed
+ advantage, since only the last 32K of io.output is copied to the sliding window
  upon return from inflate(), and since all distances after the first 32K of
- output will fall in the output data, making match copies simpler and faster.
+ io.output will fall in the io.output data, making match copies simpler and faster.
  The advantage may be dependent on the size of the processor's data caches.
  */
 function updatewindow(strm, src, end, copy) {
@@ -8763,7 +8763,7 @@ function updatewindow(strm, src, end, copy) {
     state.window = new utils.Buf8(state.wsize);
   }
 
-  /* copy state->wsize or less output bytes into the circular window */
+  /* copy state->wsize or less io.output bytes into the circular window */
   if (copy >= state.wsize) {
     utils.arraySet(state.window, src, end - state.wsize, state.wsize, 0);
     state.wnext = 0;
@@ -8794,13 +8794,13 @@ function updatewindow(strm, src, end, copy) {
 
 function inflate(strm, flush) {
   var state;
-  var input, output;          // input/output buffers
-  var next;                   /* next input INDEX */
-  var put;                    /* next output INDEX */
-  var have, left;             /* available input and output */
+  var input, output;          // io.input/io.output buffers
+  var next;                   /* next io.input INDEX */
+  var put;                    /* next io.output INDEX */
+  var have, left;             /* available io.input and io.output */
   var hold;                   /* bit buffer */
   var bits;                   /* bits in bit buffer */
-  var _in, _out;              /* save starting available input and output */
+  var _in, _out;              /* save starting available io.input and io.output */
   var copy;                   /* number of stored or match bytes to copy */
   var from;                   /* where to copy match bytes from */
   var from_source;
@@ -9733,7 +9733,7 @@ function inflate(strm, flush) {
 //          left -= copy;
 //          state.length -= copy;
 //          do {
-//            output[put++] = 0;
+//            io.output[put++] = 0;
 //          } while (--copy);
 //          if (state.length === 0) { state.mode = LEN; }
 //          break;
@@ -9749,7 +9749,7 @@ function inflate(strm, flush) {
         if (copy > state.length) { copy = state.length; }
         from_source = state.window;
       }
-      else {                              /* copy from output */
+      else {                              /* copy from io.output */
         from_source = output;
         from = put - state.offset;
         copy = state.length;
@@ -10876,7 +10876,7 @@ function init_block(s) {
 
 
 /* ===========================================================================
- * Flush the bit buffer and align the output on a byte boundary
+ * Flush the bit buffer and align the io.output on a byte boundary
  */
 function bi_windup(s)
 {
@@ -10896,7 +10896,7 @@ function bi_windup(s)
  */
 function copy_block(s, buf, len, header)
 //DeflateState *s;
-//charf    *buf;    /* the input data */
+//charf    *buf;    /* the io.input data */
 //unsigned len;     /* its length */
 //int      header;  /* true if block header must be written */
 {
@@ -11395,8 +11395,8 @@ function _tr_init(s)
  */
 function _tr_stored_block(s, buf, stored_len, last)
 //DeflateState *s;
-//charf *buf;       /* input block */
-//ulg stored_len;   /* length of input block */
+//charf *buf;       /* io.input block */
+//ulg stored_len;   /* length of io.input block */
 //int last;         /* one if this is the last block for a file */
 {
   send_bits(s, (STORED_BLOCK << 1) + (last ? 1 : 0), 3);    /* send block type */
@@ -11417,12 +11417,12 @@ function _tr_align(s) {
 
 /* ===========================================================================
  * Determine the best encoding for the current block: dynamic trees, static
- * trees or store, and output the encoded block to the zip file.
+ * trees or store, and io.output the encoded block to the zip file.
  */
 function _tr_flush_block(s, buf, stored_len, last)
 //DeflateState *s;
-//charf *buf;       /* input block, or NULL if too old */
-//ulg stored_len;   /* length of input block */
+//charf *buf;       /* io.input block, or NULL if too old */
+//ulg stored_len;   /* length of io.input block */
 //int last;         /* one if this is the last block for a file */
 {
   var opt_lenb, static_lenb;  /* opt_len and static_len in bytes */
@@ -11472,7 +11472,7 @@ function _tr_flush_block(s, buf, stored_len, last)
     /* 4: two words for the lengths */
 
     /* The test buf != NULL is only necessary if LIT_BUFSIZE > WSIZE.
-     * Otherwise we can't have processed more than WSIZE input bytes since
+     * Otherwise we can't have processed more than WSIZE io.input bytes since
      * the last block flush, because compression would have been
      * successful. If LIT_BUFSIZE <= WSIZE, it is never too late to
      * transform a block into a stored block.
@@ -11593,19 +11593,19 @@ exports._tr_align = _tr_align;
 // 3. This notice may not be removed or altered from any source distribution.
 
 function ZStream() {
-  /* next input byte */
+  /* next io.input byte */
   this.input = null; // JS specific, because we have no pointers
   this.next_in = 0;
-  /* number of bytes available at input */
+  /* number of bytes available at io.input */
   this.avail_in = 0;
-  /* total number of input bytes read so far */
+  /* total number of io.input bytes read so far */
   this.total_in = 0;
-  /* next output byte should be put there */
+  /* next io.output byte should be put there */
   this.output = null; // JS specific, because we have no pointers
   this.next_out = 0;
-  /* remaining free space at output */
+  /* remaining free space at io.output */
   this.avail_out = 0;
-  /* total number of bytes output so far */
+  /* total number of bytes io.output so far */
   this.total_out = 0;
   /* last error message, NULL if no error */
   this.msg = ''/*Z_NULL*/;

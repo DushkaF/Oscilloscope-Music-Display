@@ -188,14 +188,14 @@ implements java.lang.Runnable</pre>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="input/InputArgs.html" title="class in input">InputArgs</a></code></td>
+<td class="colFirst"><code><a href="input/InputArgs.html" title="class in io.input">InputArgs</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#loadInputArgs(java.lang.String)">loadInputArgs</a></span>&#8203;(java.lang.String&nbsp;path)</code></th>
 <td class="colLast">
 <div class="block">Метод, осуществляющий загрузку параметров ввода из файла , или создание параметров ввода по умолчанию</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="output/OutputArgs.html" title="class in output">OutputArgs</a></code></td>
+<td class="colFirst"><code><a href="output/OutputArgs.html" title="class in io.output">OutputArgs</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#loadOutputArgs(java.lang.String)">loadOutputArgs</a></span>&#8203;(java.lang.String&nbsp;path)</code></th>
 <td class="colLast">
 <div class="block">Метод, осуществляющий загрузку параметров вывода из файла , или создание параметров вывода по умолчанию</div>
@@ -278,13 +278,13 @@ implements java.lang.Runnable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>loadInputArgs</h4>
-<pre class="methodSignature">public&nbsp;<a href="input/InputArgs.html" title="class in input">InputArgs</a>&nbsp;loadInputArgs&#8203;(java.lang.String&nbsp;path)</pre>
+<pre class="methodSignature">public&nbsp;<a href="input/InputArgs.html" title="class in io.input">InputArgs</a>&nbsp;loadInputArgs&#8203;(java.lang.String&nbsp;path)</pre>
 <div class="block">Метод, осуществляющий загрузку параметров ввода из файла , или создание параметров ввода по умолчанию</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>path</code> - - путь к файлу с параметрами ввода</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>возвращает объект типа <a href="input/InputArgs.html" title="class in input"><code>InputArgs</code></a>, хранящий параметры ввода</dd>
+<dd>возвращает объект типа <a href="input/InputArgs.html" title="class in io.input"><code>InputArgs</code></a>, хранящий параметры ввода</dd>
 </dl>
 </li>
 </ul>
@@ -294,13 +294,13 @@ implements java.lang.Runnable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>loadOutputArgs</h4>
-<pre class="methodSignature">public&nbsp;<a href="output/OutputArgs.html" title="class in output">OutputArgs</a>&nbsp;loadOutputArgs&#8203;(java.lang.String&nbsp;path)</pre>
+<pre class="methodSignature">public&nbsp;<a href="output/OutputArgs.html" title="class in io.output">OutputArgs</a>&nbsp;loadOutputArgs&#8203;(java.lang.String&nbsp;path)</pre>
 <div class="block">Метод, осуществляющий загрузку параметров вывода из файла , или создание параметров вывода по умолчанию</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>path</code> - - путь к файлу с параметрами вывода</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>возвращает объект типа <a href="output/OutputArgs.html" title="class in output"><code>OutputArgs</code></a>, хранящий параметры вывода</dd>
+<dd>возвращает объект типа <a href="output/OutputArgs.html" title="class in io.output"><code>OutputArgs</code></a>, хранящий параметры вывода</dd>
 </dl>
 </li>
 </ul>
@@ -312,7 +312,7 @@ implements java.lang.Runnable</pre>
 <h4>start</h4>
 <pre class="methodSignature">public&nbsp;void&nbsp;start()</pre>
 <div class="block">Метод, запускающий работу основного потока программы.
- Создает поля <a href="#input"><code>input</code></a>,<a href="#output"><code>output</code></a>,<a href="#mapMain"><code>mapMain</code></a>,<a href="#vecMain"><code>vecMain</code></a>,<a href="#edgMain"><code>edgMain</code></a> и <a href="#sc"><code>sc</code></a></div>
+ Создает поля <a href="#input"><code>io.input</code></a>,<a href="#output"><code>io.output</code></a>,<a href="#mapMain"><code>mapMain</code></a>,<a href="#vecMain"><code>vecMain</code></a>,<a href="#edgMain"><code>edgMain</code></a> и <a href="#sc"><code>sc</code></a></div>
 </li>
 </ul>
 <a id="run()">

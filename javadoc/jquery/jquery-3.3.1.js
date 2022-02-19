@@ -622,7 +622,7 @@ var i,
 			whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)", "i" )
 	},
 
-	rinputs = /^(?:input|select|textarea|button)$/i,
+	rinputs = /^(?:io.input|select|textarea|button)$/i,
 	rheader = /^h\d$/i,
 
 	rnative = /^[^{]+\{\s*\[native \w/,
@@ -938,7 +938,7 @@ function siblingCheck( a, b ) {
 }
 
 /**
- * Returns a function to use in pseudos for input types
+ * Returns a function to use in pseudos for io.input types
  * @param {String} type
  */
 function createInputPseudo( type ) {
@@ -1040,7 +1040,7 @@ function createPositionalPseudo( fn ) {
 /**
  * Checks a node for validity as a Sizzle context
  * @param {Element|Object=} context
- * @returns {Element|Object|Boolean} The input node if acceptable, otherwise a falsy value
+ * @returns {Element|Object|Boolean} The io.input node if acceptable, otherwise a falsy value
  */
 function testContext( context ) {
 	return context && typeof context.getElementsByTagName !== "undefined" && context;
@@ -1289,7 +1289,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 
 			// Support: Windows 8 Native Apps
 			// The type and name attributes are restricted during .innerHTML assignment
-			var input = document.createElement("input");
+			var io.input = document.createElement("input");
 			input.setAttribute( "type", "hidden" );
 			el.appendChild( input ).setAttribute( "name", "D" );
 
@@ -1380,7 +1380,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			return 0;
 		}
 
-		// Sort on method existence if only one input has compareDocumentPosition
+		// Sort on method existence if only one io.input has compareDocumentPosition
 		var compare = !a.compareDocumentPosition - !b.compareDocumentPosition;
 		if ( compare ) {
 			return compare;
@@ -1567,7 +1567,7 @@ Sizzle.uniqueSort = function( results ) {
 		}
 	}
 
-	// Clear input after sorting to release objects
+	// Clear io.input after sorting to release objects
 	// See https://github.com/jquery/sizzle/pull/225
 	sortInput = null;
 
@@ -1922,7 +1922,7 @@ Expr = Sizzle.selectors = {
 			// Trim the selector passed to compile
 			// to avoid treating leading and trailing
 			// spaces as combinators
-			var input = [],
+			var io.input = [],
 				results = [],
 				matcher = compile( selector.replace( rtrim, "$1" ) );
 
@@ -2042,7 +2042,7 @@ Expr = Sizzle.selectors = {
 			return !Expr.pseudos["empty"]( elem );
 		},
 
-		// Element/input types
+		// Element/io.input types
 		"header": function( elem ) {
 			return rheader.test( elem.nodeName );
 		},
@@ -2115,7 +2115,7 @@ Expr = Sizzle.selectors = {
 
 Expr.pseudos["nth"] = Expr.pseudos["eq"];
 
-// Add button/input type pseudos
+// Add button/io.input type pseudos
 for ( i in { radio: true, checkbox: true, file: true, password: true, image: true } ) {
 	Expr.pseudos[ i ] = createInputPseudo( i );
 }
@@ -2329,7 +2329,7 @@ function setMatcher( preFilter, selector, matcher, postFilter, postFinder, postS
 			// Get initial elements from seed or context
 			elems = seed || multipleContexts( selector || "*", context.nodeType ? [ context ] : context, [] ),
 
-			// Prefilter to get matcher input, preserving a map for seed-results synchronization
+			// Prefilter to get matcher io.input, preserving a map for seed-results synchronization
 			matcherIn = preFilter && ( seed || !selector ) ?
 				condense( elems, preMap, preFilter, context, xml ) :
 				elems,
@@ -2720,7 +2720,7 @@ if ( !assert(function( el ) {
 // Support: IE<9
 // Use defaultValue in place of getAttribute("value")
 if ( !support.attributes || !assert(function( el ) {
-	el.innerHTML = "<input/>";
+	el.innerHTML = "<io.input/>";
 	el.firstChild.setAttribute( "value", "" );
 	return el.firstChild.getAttribute( "value" ) === "";
 }) ) {
@@ -4833,7 +4833,7 @@ function buildFragment( elems, context, scripts, selection, ignored ) {
 ( function() {
 	var fragment = document.createDocumentFragment(),
 		div = fragment.appendChild( document.createElement( "div" ) ),
-		input = document.createElement( "input" );
+		io.input = document.createElement( "input" );
 
 	// Support: Android 4.0 - 4.3 only
 	// Check state lost if the name is set (#11217)
@@ -5593,7 +5593,7 @@ var
 	/* eslint-disable max-len */
 
 	// See https://github.com/eslint/eslint/issues/3229
-	rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,
+	rxhtmlTag = /<(?!area|br|col|embed|hr|img|io.input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi,
 
 	/* eslint-enable */
 
@@ -7488,7 +7488,7 @@ jQuery.fn.delay = function( time, type ) {
 
 
 ( function() {
-	var input = document.createElement( "input" ),
+	var io.input = document.createElement( "input" ),
 		select = document.createElement( "select" ),
 		opt = select.appendChild( document.createElement( "option" ) );
 
@@ -7503,7 +7503,7 @@ jQuery.fn.delay = function( time, type ) {
 	support.optSelected = opt.selected;
 
 	// Support: IE <=11 only
-	// An input loses its value after becoming a radio
+	// An io.input loses its value after becoming a radio
 	input = document.createElement( "input" );
 	input.value = "t";
 	input.type = "radio";
@@ -7643,7 +7643,7 @@ jQuery.each( jQuery.expr.match.bool.source.match( /\w+/g ), function( i, name ) 
 
 
 
-var rfocusable = /^(?:input|select|textarea|button)$/i,
+var rfocusable = /^(?:io.input|select|textarea|button)$/i,
 	rclickable = /^(?:a|area)$/i;
 
 jQuery.fn.extend( {
@@ -8393,7 +8393,7 @@ jQuery.parseXML = function( data ) {
 	}
 
 	// Support: IE 9 - 11 only
-	// IE throws on parseFromString with invalid input.
+	// IE throws on parseFromString with invalid io.input.
 	try {
 		xml = ( new window.DOMParser() ).parseFromString( data, "text/xml" );
 	} catch ( e ) {
@@ -8411,7 +8411,7 @@ var
 	rbracket = /\[\]$/,
 	rCRLF = /\r?\n/g,
 	rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
-	rsubmittable = /^(?:input|select|textarea|keygen)/i;
+	rsubmittable = /^(?:io.input|select|textarea|keygen)/i;
 
 function buildParams( prefix, obj, traditional, add ) {
 	var name;
@@ -8756,7 +8756,7 @@ function ajaxConvert( s, response, jqXHR, isSuccess ) {
 						tmp = conv2.split( " " );
 						if ( tmp[ 1 ] === current ) {
 
-							// If prev can be converted to accepted input
+							// If prev can be converted to accepted io.input
 							conv = converters[ prev + " " + tmp[ 0 ] ] ||
 								converters[ "* " + tmp[ 0 ] ];
 							if ( conv ) {

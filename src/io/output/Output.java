@@ -1,6 +1,6 @@
-package output;
+package io.output;
 
-import input.InputArgs;
+import io.args.OutputArgs;
 import map.Map;
 
 public class Output {

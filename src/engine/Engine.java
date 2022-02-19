@@ -2,13 +2,14 @@ package engine;
 
 import edges.EdgMain;
 import edges.Edges;
-import input.Input;
-import input.InputArgs;
-import input.Picture;
+import io.args.Args;
+import io.input.Input;
+import io.args.InputArgs;
+import io.input.Picture;
 import map.Map;
 import map.MapMain;
-import output.Output;
-import output.OutputArgs;
+import io.output.Output;
+import io.args.OutputArgs;
 import vectors.VecMain;
 import vectors.Figures;
 
@@ -121,30 +122,14 @@ public class Engine implements Runnable{
      * Инициализирует необходимые классы для взаимодействия с другими частями программы: {@link Engine#input},{@link Engine#output},{@link Engine#mapMain},{@link Engine#vecMain}, {@link Engine#edgMain} и {@link Engine#console}.
      */
     public void init() {
-        loadInputArgs("PATH");
-        loadOutputArgs("PATH");
+        inputArgs=Args.loadInArgs("cfg/io.input/last_args.txt");
+        outputArgs= Args.loadOutArgs("cfg/io.output/last_args.txt");
         input=new Input(inputArgs);
         output=new Output(outputArgs);
         mapMain=new MapMain();
         vecMain=new VecMain();
         edgMain=new EdgMain();
         console=new Console(this);
-    }
-
-    /**
-     * Метод, осуществляющий загрузку параметров ввода из файла , или создание параметров ввода по умолчанию
-     * @param path путь к файлу с параметрами ввода
-     */
-    public void loadInputArgs(String path){
-        inputArgs=new InputArgs(path);
-    }
-
-    /**
-     * Метод, осуществляющий загрузку параметров вывода из файла , или создание параметров вывода по умолчанию
-     * @param path - путь к файлу с параметрами вывода
-     */
-    public void loadOutputArgs(String path){
-        outputArgs=new OutputArgs(path);
     }
 
     public InputArgs getInputArgs() {

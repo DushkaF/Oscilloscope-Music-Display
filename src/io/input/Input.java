@@ -1,4 +1,6 @@
-package input;
+package io.input;
+
+import io.args.InputArgs;
 
 public class Input {
     private InputArgs inputArgs;
