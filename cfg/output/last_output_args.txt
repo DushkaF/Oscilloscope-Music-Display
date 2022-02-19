@@ -1,0 +1,4 @@
+{
+    "isActive": "false",
+    "savePath": "saves/data.out"
+}

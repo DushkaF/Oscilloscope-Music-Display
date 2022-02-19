@@ -1,0 +1,8 @@
+{
+    "picturePath": "cfg/something.jpg",
+    "inPciture": "true",
+    "age": 30,
+    "someClass": {
+        "blabla": "117013"
+    }
+}

@@ -1,5 +1,6 @@
 package engine;
 
+import io.args.Args;
 import io.args.InputArgs;
 import io.args.OutputArgs;
 import java.util.Scanner;
@@ -9,8 +10,7 @@ import java.util.Scanner;
  */
 public class Console extends Thread{
     private Scanner scanner;
-    private InputArgs inputArgs;
-    private OutputArgs outputArgs;
+    private Args args;
     private Thread consoleTime;
     public boolean running;
 
@@ -21,8 +21,7 @@ public class Console extends Thread{
      */
     public Console(Engine eng){
         scanner=new Scanner(System.in);
-        inputArgs=eng.getInputArgs();
-        outputArgs=eng.getOutputArgs();
+        args=eng.getArgs();
         consoleTime=new Thread(new ConsoleTime());
     }
 
@@ -54,21 +53,22 @@ public class Console extends Thread{
                     case "-e":
                         running=false;
                         break;
+                    case "-h":
+                        System.out.println(args.help());
+                        break;
                     case "-i":
-                        inputArgs.command(message);
+                        args.command(message);
                         break;
                     case "-o":
-                        outputArgs.command(message);
+                        args.command(message);
                         break;
                     default:
                         System.out.println("Wrong command");
-                        System.out.println(inputArgs.help());
-                        System.out.println(outputArgs.help());
+                        System.out.println(args.help());
                 }
             }else{
                 System.out.println("Wrong command");
-                System.out.println(inputArgs.help());
-                System.out.println(outputArgs.help());
+                System.out.println(args.help());
             }
         }
     }
@@ -77,22 +77,21 @@ public class Console extends Thread{
      * Внутренний класс таймера консоли. Осуществляет отсчет времени работы консоли.
      */
     class ConsoleTime implements Runnable{
-        private double infoPeriod=30.0;
+        private double infoPeriod=5.0;
 
         @Override
         public void run() {
             double time = 0.0; //current time
             double lastTime = System.nanoTime() / 1000_000_000.0; //last got time
             double elapsedTime = 0.0; // elapsed time after last program's tick
-            double consoleTime = 0.0; // elapsed time after last render
+            double consoleTime = 0.0; // elapsed time after last info message
             while (running) {
                 time = System.nanoTime() / 1_000_000_000.0;
                 elapsedTime = time - lastTime;
                 lastTime = time;
                 consoleTime += elapsedTime;
                 if (consoleTime > infoPeriod) {
-                    System.out.println(inputArgs);
-                    System.out.println(outputArgs);
+                    System.out.println(args.info());
                     consoleTime=0.0;
                 }
             }

@@ -4,12 +4,10 @@ import edges.EdgMain;
 import edges.Edges;
 import io.args.Args;
 import io.input.Input;
-import io.args.InputArgs;
 import io.input.Picture;
 import map.Map;
 import map.MapMain;
 import io.output.Output;
-import io.args.OutputArgs;
 import vectors.VecMain;
 import vectors.Figures;
 
@@ -19,14 +17,9 @@ import vectors.Figures;
 public class Engine implements Runnable{
 
     /**
-     * Поле аргументов чтения
+     * Поле аргументов чтения и вывода
      */
-    private InputArgs inputArgs;
-
-    /**
-     * Поле аргументов вывода
-     */
-    private OutputArgs outputArgs;
+    private Args ioArgs;
 
     /**
      * Поле, определяющее осуществляется ли работа основного цикла программы
@@ -104,9 +97,7 @@ public class Engine implements Runnable{
                 figures=vecMain.getVectors(edges);
                 map=mapMain.getMap(figures);
                 output.draw(map);
-
             }
-
         }
         end();
     }
@@ -122,21 +113,19 @@ public class Engine implements Runnable{
      * Инициализирует необходимые классы для взаимодействия с другими частями программы: {@link Engine#input},{@link Engine#output},{@link Engine#mapMain},{@link Engine#vecMain}, {@link Engine#edgMain} и {@link Engine#console}.
      */
     public void init() {
-        inputArgs=Args.loadInArgs("cfg/io.input/last_args.txt");
-        outputArgs= Args.loadOutArgs("cfg/io.output/last_args.txt");
-        input=new Input(inputArgs);
-        output=new Output(outputArgs);
+        ioArgs=new Args();
+        ioArgs.inputArgs=Args.loadInArgs("cfg/input/last_input_args.txt");
+        ioArgs.outputArgs= Args.loadOutArgs("cfg/output/last_output_args.txt");
+        input=new Input(ioArgs.inputArgs);
+        output=new Output(ioArgs.outputArgs);
         mapMain=new MapMain();
         vecMain=new VecMain();
         edgMain=new EdgMain();
         console=new Console(this);
     }
 
-    public InputArgs getInputArgs() {
-        return inputArgs;
+    public Args getArgs() {
+        return ioArgs;
     }
 
-    public OutputArgs getOutputArgs() {
-        return outputArgs;
-    }
 }
