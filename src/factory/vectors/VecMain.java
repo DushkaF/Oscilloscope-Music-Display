@@ -3,7 +3,7 @@ package factory.vectors;
 import factory.edges.Edges;
 
 public class VecMain {
-    public Figures getVectors(Edges edges) {
+    public Figures getFigures(Edges edges) {
         return null;
     }
 }

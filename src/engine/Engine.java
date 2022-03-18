@@ -1,6 +1,7 @@
 package engine;
 
 import factory.edges.Edges;
+import factory.map.Map;
 import factory.vectors.Figures;
 import io.args.Args;
 import io.input.Input;
@@ -17,7 +18,8 @@ public class Engine implements Runnable {
     private Thread consoleThread;
     private Thread inputThread;
     private Thread outputThread;
-
+    private Thread debugThread;
+    private DebugWindow debugWindow;
     private Input input;
     private Output output;
     private Picture picture;
@@ -36,6 +38,9 @@ public class Engine implements Runnable {
         args=new Args();
         args.outputArgs = Args.loadOutArgs("cfg/output/last_output_args.txt");
         args.inputArgs = Args.loadInArgs("cfg/input/last_input_args.txt");
+        edgMain=new EdgMain();
+        vecMain=new VecMain();
+        mapMain=new MapMain();
     }
 
     public void start() {
@@ -44,17 +49,19 @@ public class Engine implements Runnable {
         console=new Console(this);
         input=new Input(args.inputArgs);
         output=new Output(args.outputArgs);
-
-        consoleThread=new Thread(console);
-        inputThread=new Thread(input);
-        outputThread=new Thread(output);
-        engineThread=new Thread(this);
-
+        consoleThread=new Thread(console, "CONSOLE_THREAD");
+        engineThread=new Thread(this, "ENGINE_THREAD");
         engineThread.start();
         consoleThread.start();
+        /*
+        inputThread=new Thread(input);
+        outputThread=new Thread(output);
+
+
+
         inputThread.start();
         outputThread.start();
-
+        */
     }
 
     @Override
@@ -65,6 +72,8 @@ public class Engine implements Runnable {
         double unrenderedTime = 0.0; // elapsed time after last render
         Edges edges;
         Figures figures;
+        Map map;
+        picture=new Picture();
         while(running){
             /*calculating time*/
             time = System.nanoTime() / 1_000_000_000.0;
@@ -74,17 +83,24 @@ public class Engine implements Runnable {
             if(unrenderedTime>=CHANGE_PERIOD*100){
                 unrenderedTime=0;
                 System.out.println("RENDER");
-                picture= input.getPicture();
+                //picture= input.getPicture();
                 edges= edgMain.getEdges(picture);
-                figures=vecMain.getVectors(edges);
+                figures=vecMain.getFigures(edges);
+                map=mapMain.getMap(figures);
+                output.draw(map);
+                if(debugThread.isAlive()){
+                    debugWindow.setPicture(picture);
+                }
             }
         }
     }
 
     public void openDebug() {
-        Thread debugWindow = new Thread( new DebugWindow());
-        debugWindow.setDaemon(true);
-        debugWindow.setName("DEBUG_THREAD");
-        debugWindow.start();
+        debugWindow=new DebugWindow();
+        debugThread = new Thread(debugWindow);
+        debugThread.setDaemon(true);
+        debugThread.setName("DEBUG_THREAD");
+        debugWindow.setPicture(picture);
+        debugThread.start();
     }
 }
