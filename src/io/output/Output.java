@@ -1,10 +1,11 @@
 package io.output;
 
 import io.args.OutputArgs;
-import map.Map;
+import factory.map.Map;
 
-public class Output {
+public class Output implements Runnable{
     private OutputArgs outputArgs;
+    private Thread outputThread;
     public Output(OutputArgs outputArgs) {
         this.outputArgs=outputArgs;
     }
@@ -14,5 +15,16 @@ public class Output {
 
     public OutputArgs getArgs() {
         return outputArgs;
+    }
+
+    public void start() {
+        outputThread=new Thread(this);
+        outputThread.setName("OUTPUT_THREAD");
+        outputThread.run();
+    }
+
+    @Override
+    public void run() {
+
     }
 }

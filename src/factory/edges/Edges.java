@@ -1,4 +1,4 @@
-package edges;
+package factory.edges;
 
 public class Edges {
 }

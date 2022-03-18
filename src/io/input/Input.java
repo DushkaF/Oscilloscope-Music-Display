@@ -1,9 +1,11 @@
 package io.input;
 
+import engine.Picture;
 import io.args.InputArgs;
 
-public class Input {
+public class Input implements Runnable{
     private InputArgs inputArgs;
+    private Thread inputThread;
     public Input(InputArgs inputArgs) {
         this.inputArgs=inputArgs;
     }
@@ -18,5 +20,17 @@ public class Input {
 
     public InputArgs getArgs() {
         return inputArgs;
+    }
+
+    public void start() {
+        inputThread=new Thread(this);
+        inputThread.setName("INPUT_THREAD");
+        inputThread.setDaemon(true);
+        inputThread.run();
+    }
+
+    @Override
+    public void run() {
+
     }
 }

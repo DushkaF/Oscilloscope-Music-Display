@@ -1,6 +1,6 @@
-package map;
+package factory.map;
 
-import vectors.Figures;
+import factory.vectors.Figures;
 
 public class MapMain {
     public Map getMap(Figures vectors) {

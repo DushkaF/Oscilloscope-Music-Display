@@ -1,6 +1,6 @@
-package vectors;
+package factory.vectors;
 
-import edges.Edges;
+import factory.edges.Edges;
 
 public class VecMain {
     public Figures getVectors(Edges edges) {

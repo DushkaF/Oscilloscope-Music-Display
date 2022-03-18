@@ -1,131 +1,90 @@
 package engine;
 
-import edges.EdgMain;
-import edges.Edges;
+import factory.edges.Edges;
+import factory.vectors.Figures;
 import io.args.Args;
 import io.input.Input;
-import io.input.Picture;
-import map.Map;
-import map.MapMain;
 import io.output.Output;
-import vectors.VecMain;
-import vectors.Figures;
+import factory.edges.EdgMain;
+import factory.map.MapMain;
+import factory.vectors.VecMain;
 
-/**
- * Главный класс, осуществляющий связь всех компонентов программы
- */
-public class Engine implements Runnable{
+public class Engine implements Runnable {
+    protected boolean running;
+    private final double CHANGE_PERIOD = 1 / 30.0;
 
-    /**
-     * Поле аргументов чтения и вывода
-     */
-    private Args ioArgs;
+    private Thread engineThread;
+    private Thread consoleThread;
+    private Thread inputThread;
+    private Thread outputThread;
 
-    /**
-     * Поле, определяющее осуществляется ли работа основного цикла программы
-     */
-    private boolean running = false;
-
-    /**
-     * Поле минимального периода между обработкой двух кадров
-     */
-    private final double CHANGE_PERIOD = 1 /30.0;
-
-    /**
-     * Экземпляр модуля типа {@link Console}, отвечающего за чтение и вывод в консоль
-     */
-    private Console console;
-
-    /**
-     * Экземпляр модуля ввода изображения типа {@link Input}
-     */
     private Input input;
-
-    /**
-     * Экземпляр модуля вывода изображения на осциллограф типа {@link Output}
-     */
     private Output output;
-
-    /**
-     * Экземпляр модуля типа {@link VecMain} для преобразования растра в векторы
-     */
-    private VecMain vecMain;
-
-    /**
-     * Экземпляр модуля создания карты вывода типа {@link MapMain}
-     */
-    private MapMain mapMain;
-
-    /**
-     * Экземпляр модуля типа {@link EdgMain} для первичной обработки изображения (выделения краев).
-     */
+    private Picture picture;
+    private Console console;
     private EdgMain edgMain;
+    private VecMain vecMain;
+    private MapMain mapMain;
+    protected Args args;
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         Engine engine = new Engine();
-        engine.init();
-        engine.run();
+        engine.start();
     }
 
-    /**
-     * Основной метод работы программы.
-     * Осуществляет отсчет времени для обработки следующих кадров. Взаимодействие модулей программы между собой и с пользователем.
-     */
-    public void run(){
+    public Engine() {
+        args=new Args();
+        args.outputArgs = Args.loadOutArgs("cfg/output/last_output_args.txt");
+        args.inputArgs = Args.loadInArgs("cfg/input/last_input_args.txt");
+    }
+
+    public void start() {
+        running = true;
+
+        console=new Console(this);
+        input=new Input(args.inputArgs);
+        output=new Output(args.outputArgs);
+
+        consoleThread=new Thread(console);
+        inputThread=new Thread(input);
+        outputThread=new Thread(output);
+        engineThread=new Thread(this);
+
+        engineThread.start();
+        consoleThread.start();
+        inputThread.start();
+        outputThread.start();
+
+    }
+
+    @Override
+    public void run() {
         double time = 0.0; //current time
         double lastTime = System.nanoTime() / 1000_000_000.0; //last got time
         double elapsedTime = 0.0; // elapsed time after last program's tick
         double unrenderedTime = 0.0; // elapsed time after last render
-        running = true;
-        console.startRunning();
-
-        Picture picture;
         Edges edges;
         Figures figures;
-        Map map;
-
-        while (running&& console.running) {
+        while(running){
             /*calculating time*/
             time = System.nanoTime() / 1_000_000_000.0;
             elapsedTime = time - lastTime;
             lastTime = time;
             unrenderedTime += elapsedTime;
-            if(unrenderedTime>=CHANGE_PERIOD){
+            if(unrenderedTime>=CHANGE_PERIOD*100){
                 unrenderedTime=0;
-                picture=input.getPicture();
-                edges=edgMain.getEdges(picture);
+                System.out.println("RENDER");
+                picture= input.getPicture();
+                edges= edgMain.getEdges(picture);
                 figures=vecMain.getVectors(edges);
-                map=mapMain.getMap(figures);
-                output.draw(map);
             }
         }
-        end();
     }
 
-    /**
-     * Метод завершения программы. Осуществляет сохранение необходимых полей, объектов и т.д.
-     */
-    public void end() {
-        console.stopRunning();
+    public void openDebug() {
+        Thread debugWindow = new Thread( new DebugWindow());
+        debugWindow.setDaemon(true);
+        debugWindow.setName("DEBUG_THREAD");
+        debugWindow.start();
     }
-
-    /**
-     * Инициализирует необходимые классы для взаимодействия с другими частями программы: {@link Engine#input},{@link Engine#output},{@link Engine#mapMain},{@link Engine#vecMain}, {@link Engine#edgMain} и {@link Engine#console}.
-     */
-    public void init() {
-        ioArgs=new Args();
-        ioArgs.inputArgs=Args.loadInArgs("cfg/input/last_input_args.txt");
-        ioArgs.outputArgs= Args.loadOutArgs("cfg/output/last_output_args.txt");
-        input=new Input(ioArgs.inputArgs);
-        output=new Output(ioArgs.outputArgs);
-        mapMain=new MapMain();
-        vecMain=new VecMain();
-        edgMain=new EdgMain();
-        console=new Console(this);
-    }
-
-    public Args getArgs() {
-        return ioArgs;
-    }
-
 }

@@ -1,4 +1,4 @@
-package map;
+package factory.map;
 
 public class Map {
 }

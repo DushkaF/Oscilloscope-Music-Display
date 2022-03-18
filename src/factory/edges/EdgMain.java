@@ -1,6 +1,6 @@
-package edges;
+package factory.edges;
 
-import io.input.Picture;
+import engine.Picture;
 
 public class EdgMain {
     public Edges getEdges(Picture picture) {

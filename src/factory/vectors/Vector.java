@@ -1,4 +1,4 @@
-package vectors;
+package factory.vectors;
 
 import java.util.Objects;
 

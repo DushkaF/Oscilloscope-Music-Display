@@ -1,4 +1,4 @@
-package vectors;
+package factory.vectors;
 
 public class Point {
     private short x;
