@@ -20,8 +20,7 @@ public class Input implements Runnable{
         this.inputArgs=inputArgs;
     }
 
-    public Picture getPicture() {
-        picture=new Picture();
+    public Picture getPicture(Picture picture) {
         switch (inputArgs.pictureSource){
             case FILE:
                 switch (inputArgs.pictureType){
@@ -61,10 +60,6 @@ public class Input implements Runnable{
                 break;
         }
         return picture;
-    }
-
-    public String input(String nextLine) {
-        return null;
     }
 
     public InputArgs getArgs() {

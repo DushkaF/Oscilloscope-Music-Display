@@ -23,18 +23,17 @@ public class DebugWindow implements Runnable{
     public void run() {
         Toolkit toolkit=Toolkit.getDefaultToolkit();
         window = new RenderWindow();
-        window.create(new VideoMode(toolkit.getScreenSize().width/2,toolkit.getScreenSize().height/2), "Oscilloscope_Music_Display_Debug");
+        window.create(new VideoMode(toolkit.getScreenSize().width-320,toolkit.getScreenSize().height-180), "Oscilloscope_Music_Display_Debug");
         window.setFramerateLimit(30);
         while (window.isOpen()) {
             // drawing part (redrawing for next frame)
             window.clear();
             try {
-                picture.draw(window, debugArgs);
+                Drawer.draw(picture, window, debugArgs);
             } catch (TextureCreationException e) {
                 e.printStackTrace();
             }
             window.display();
-
             for(Event e: window.pollEvents()){
                 switch (e.type) {
                     case CLOSED:

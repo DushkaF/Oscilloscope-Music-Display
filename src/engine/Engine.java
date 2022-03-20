@@ -17,17 +17,20 @@ public class Engine implements Runnable {
 
     private Thread engineThread;
     private Thread consoleThread;
-    private Thread inputThread;
-    private Thread outputThread;
     private Thread debugThread;
+
     private DebugWindow debugWindow;
+
     private Input input;
     private Output output;
-    private Picture picture;
+
+
     private Console console;
     private EdgMain edgMain;
     private VecMain vecMain;
     private MapMain mapMain;
+
+    private Picture picture;
     protected Args args;
 
     public static void main(String[] args) {
@@ -44,7 +47,7 @@ public class Engine implements Runnable {
 
     public void start() {
         running = true;
-
+        picture=new Picture();
         console=new Console(this);
         input=new Input(args.inputArgs);
         output=new Output(args.outputArgs);
@@ -52,15 +55,6 @@ public class Engine implements Runnable {
         engineThread=new Thread(this, "ENGINE_THREAD");
         engineThread.start();
         consoleThread.start();
-        /*
-        inputThread=new Thread(input);
-        outputThread=new Thread(output);
-
-
-
-        inputThread.start();
-        outputThread.start();
-        */
     }
 
     @Override
@@ -78,8 +72,8 @@ public class Engine implements Runnable {
             unrenderedTime += elapsedTime;
             if(unrenderedTime>=CHANGE_PERIOD){
                 unrenderedTime=0;
-                picture= input.getPicture();
-                edgMain.getEdges(picture);
+                input.getPicture(picture);
+                edgMain.getEdges(picture, args.inputArgs);
                 vecMain.getFigures(picture);
                 map=mapMain.getMap(picture);
                 output.draw(map);

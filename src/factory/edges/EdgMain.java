@@ -1,17 +1,20 @@
 package factory.edges;
 
 import factory.Picture;
+import io.args.InputArgs;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
+import static java.lang.Math.exp;
+import static java.lang.Math.pow;
 public class EdgMain {
-    public Edges getEdges(Picture picture) {
+    private static double[][] kernel;
+    public Edges getEdges(Picture picture, InputArgs inputArgs) {
         BufferedImage raw = picture.rawImage;
         Edges edges=new Edges(raw.getHeight(), raw.getWidth());
         getGrey(edges,raw);
-        blur(edges, 1.4, 5);
-
+        blur(edges, inputArgs.sigma, inputArgs.k);
+        picture.edgeImage=edges;
         return edges;
     }
     private void getGrey(Edges ed, BufferedImage raw){
@@ -29,26 +32,40 @@ public class EdgMain {
                 // Применяем стандартный алгоритм для получения черно-белого изображения
                 int grey = (int) (red * 0.299 + green * 0.587 + blue * 0.114);
                 //  Cоздаем новый цвет
-                ed.rawPixels[i][j]=new Color(grey, grey, grey).getRGB();
+                ed.greyPixels[i][j]=grey;
             }
         }
     }
 
     private void blur(Edges ed, double sigma, int k) {
+        if(kernel==null||kernel.length!=2*k+1){
+            kernel=new double[2*k+1][2*k+1];
+            for (int i = 0; i < 2*k+1; i++) {
+                for (int j = 0; j < 2*k+1; j++) {
+                    kernel[i][j]=1.0/(2*3.1415*sigma*sigma)*exp(-1.0*(pow(i-k-1,2)+pow(j-k-1,2))/(2*sigma*sigma));
+                    // System.out.print(kernel[i][j]+" ");
+                }
+              //  System.out.println();
+            }
+        }
+
         for (int i = 0; i < ed.height; i++) {
             for (int j = 0; j < ed.width; j++) {
                 double hS=0;
-                for(int i2=-k/2;i2<k/2+1;i2++){
-                    for(int j2=-k/2;j2<k/2+1;j2++){
+                for(int i2=-k;i2<k+1;i2++){
+                    for(int j2=-k;j2<k+1;j2++){
                         if(i2+i>0&&i2+i<ed.height &&j2+j>0&&j2+j<ed.width){
-                            hS+=Math.exp(1.0d*-(i2*i2+j2*j2)/(2*k*k))*ed.rawPixels[i][j];
+                            hS+=ed.greyPixels[i+i2][j+j2]*kernel[i2+k][j2+k];
                         }
                     }
                 }
-                ed.blurredPixels[i][j]= (int) (hS*1.0/(2*3.1415*k*k));
+               // double hS=1.0/(2*3.1415*sigma*sigma)*exp(-1.0*(pow(i-k-1,2)+pow(j-k-1,2))/(2*sigma*sigma))
+
+                //System.out.println(hS);
+                ed.blurredPixels[i][j]= (int) (hS);
+
             }
         }
     }
-
 
 }

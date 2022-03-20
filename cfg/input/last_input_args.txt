@@ -1,5 +1,9 @@
 {
+        "k": "2",
+        "sigma": "1",
         "pictureSource": "FILE",
         "pictureType": "RAW",
         "path": "test_resources/quake_test_1.jpg"
+
+
 }
