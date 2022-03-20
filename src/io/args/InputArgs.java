@@ -1,26 +1,23 @@
 package io.args;
 
+import io.args.arg_type.PictureSource;
+import io.args.arg_type.PictureType;
+
 public class InputArgs {
     @Override
     public String toString() {
         return "InputArgs{" +
-                "picturePath='" + picturePath + '\'' +
-                ", inPicture=" + inPicture +
-                ", someClass=" + someClass +
+                "pictureSource=" + pictureSource +
+                ", pictureType=" + pictureType +
+                ", path='" + path + '\'' +
                 '}';
     }
 
-    public String picturePath;
-    public boolean inPicture;
-    public SomeClass someClass;
-}
-class SomeClass{
-    @Override
-    public String toString() {
-        return "SomeClass{" +
-                "blabla='" + blabla + '\'' +
-                '}';
-    }
+    public PictureSource pictureSource;
+    public PictureType pictureType;
+    public String path;
 
-    public String blabla;
+    public byte command(String message) {
+        return 0;
+    }
 }

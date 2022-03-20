@@ -1,9 +1,9 @@
 package factory.vectors;
 
-import factory.edges.Edges;
+import factory.Picture;
 
 public class VecMain {
-    public Figures getFigures(Edges edges) {
+    public Figures getFigures(Picture edges) {
         return null;
     }
 }

@@ -11,4 +11,8 @@ public class OutputArgs {
 
     public boolean isActive;
     public String savePath;
+
+    public byte command(String message) {
+        return 0;
+    }
 }

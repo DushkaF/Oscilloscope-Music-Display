@@ -1,9 +1,9 @@
 package factory.map;
 
-import factory.vectors.Figures;
+import factory.Picture;
 
 public class MapMain {
-    public Map getMap(Figures figures) {
+    public Map getMap(Picture figures) {
         return null;
     }
 }

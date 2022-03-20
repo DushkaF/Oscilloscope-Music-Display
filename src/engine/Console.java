@@ -18,22 +18,20 @@ class Console implements Runnable {
         System.out.println(engine.args.info());
         while (engine.running) {
             message = scanner.nextLine();
-            if (message != null && message.length() >= 2) {
-                switch (message.substring(0, 2)) {
-                    case "-d":
-                        engine.openDebug();
-                        break;
-                    case "-e":
+            if (message != null && message.length() >= 3) {
+                switch (message.substring(0, 3)) {
+                    case "-e ":
                         engine.running = false;
                         break;
-                    case "-h":
+                    case "-h ":
                         System.out.println(engine.args.help());
                         break;
-                    case "-in":
-                    case "-o":
+                    case "-i ":
+                    case "-d ":
+                    case "-o ":
                         engine.args.command(message);
                         break;
-                    case "-i":
+                    case "-in":
                         System.out.println(engine.args.info());
                         break;
                     default:
