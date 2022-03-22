@@ -20,7 +20,7 @@ class Console implements Runnable {
             message = scanner.nextLine();
             if (message != null && message.length() >= 3) {
                 switch (message.substring(0, 3)) {
-                    case "-e ":
+                    case "-ex":
                         engine.running = false;
                         break;
                     case "-h ":
@@ -29,6 +29,8 @@ class Console implements Runnable {
                     case "-i ":
                     case "-d ":
                     case "-o ":
+                    case "-s ":
+                    case "-l ":
                         engine.args.command(message);
                         break;
                     case "-in":

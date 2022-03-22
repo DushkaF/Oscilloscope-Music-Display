@@ -14,6 +14,14 @@ public class DebugArgs {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DebugArgs debugArgs = (DebugArgs) o;
+        return Arrays.equals(pictureList, debugArgs.pictureList);
+    }
+
     public DebugArgs(){
         pictureList=new DebugPictureType[4];
         pictureList[0]=DebugPictureType.RAW;

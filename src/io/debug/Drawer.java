@@ -6,7 +6,6 @@ import io.args.arg_type.DebugPictureType;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
 
-import java.awt.image.BufferedImage;
 
 public class Drawer {
 
@@ -23,6 +22,7 @@ public class Drawer {
 
         Texture texture=new Texture();
         Sprite sprite=new Sprite();
+
         for(int i=0;i<4;i++){
             switch (dA.pictureList[i]){
                 case RAW:

@@ -6,48 +6,61 @@ import factory.vectors.Figures;
 import io.args.InputArgs;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 
-public class Input implements Runnable{
+public class Input {
     private InputArgs inputArgs;
-    private Thread inputThread;
     private File file ;
-    private BufferedImage source;
-    private Picture picture;
-
+    private String lastPath;
     public Input(InputArgs inputArgs) {
         this.inputArgs=inputArgs;
+        lastPath="";
     }
 
     public Picture getPicture(Picture picture) {
         switch (inputArgs.pictureSource){
             case FILE:
+
+                if(file==null||!file.getPath().equals(inputArgs.path))
+                    file = new File(inputArgs.path);
+                // System.out.println(file.getPath()+" "+lastPath);
                 switch (inputArgs.pictureType){
                     case RAW:
-                        if(file==null || file.getPath()!=inputArgs.path){
-                            file=new File(inputArgs.path);
-                        try {
-                            picture.rawImage = ImageIO.read(file);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        if(!file.getPath().equals(lastPath)) {
+                            try {
+                                picture.rawImage = ImageIO.read(file);
+                                lastPath= file.getPath();
+                                System.out.println("loaded raw image from file: "+file.getPath());
+                            } catch (IOException e) {
+                                picture.rawImage=null;
+                                System.out.println("Couldn't load raw image from file:"+file.getPath());
+                            }
                         }
                         break;
                     case EDGED:
-                        try {
-                            ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
-                            picture.edgeImage=(Edges) objectInputStream.readObject();
-                        } catch (IOException | ClassNotFoundException e) {
-                            e.printStackTrace();
+                        if(!file.getPath().equals(lastPath)) {
+                            try {
+                                ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
+                                picture.edgeImage=(Edges) objectInputStream.readObject();
+                                lastPath= file.getPath();
+                             //   System.out.println("loaded edged image from file: "+file.getPath());
+                            } catch (IOException | ClassNotFoundException e) {
+                                picture.edgeImage=null;
+                                System.out.println("Couldn't load edged image from file:"+file.getPath());
+                            }
                         }
                         break;
                     case VECTORIZED:
-                        try {
-                            ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
-                            picture.figures =(Figures) objectInputStream.readObject();
-                        } catch (IOException | ClassNotFoundException e) {
-                            e.printStackTrace();
+                        if(!file.getPath().equals(lastPath)) {
+                            try {
+                                ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
+                                picture.figures =(Figures) objectInputStream.readObject();
+                                lastPath= file.getPath();
+                            //    System.out.println("loaded vectorized image from file: "+file.getPath());
+                            } catch (IOException | ClassNotFoundException e) {
+                                picture.figures=null;
+                                System.out.println("Couldn't load vectorized image from file:"+file.getPath());
+                            }
                         }
                         break;
                 }
@@ -66,8 +79,4 @@ public class Input implements Runnable{
         return inputArgs;
     }
 
-    @Override
-    public void run() {
-
-    }
 }

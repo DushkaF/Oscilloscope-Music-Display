@@ -3,7 +3,6 @@ package engine;
 import factory.Picture;
 import factory.map.Map;
 import io.args.Args;
-import io.args.DebugArgs;
 import io.debug.DebugWindow;
 import io.input.Input;
 import io.output.Output;
@@ -13,7 +12,7 @@ import factory.vectors.VecMain;
 
 public class Engine implements Runnable {
     protected boolean running;
-    private final double CHANGE_PERIOD = 1 / 30.0;
+    private final double CHANGE_PERIOD = 1 / 10.0;
 
     private Thread engineThread;
     private Thread consoleThread;
@@ -47,6 +46,7 @@ public class Engine implements Runnable {
 
     public void start() {
         running = true;
+
         picture=new Picture();
         console=new Console(this);
         input=new Input(args.inputArgs);
@@ -79,6 +79,9 @@ public class Engine implements Runnable {
                 output.draw(map);
             }
         }
+        args.command("-s i cfg/input/last_input_args");
+        args.command("-s o cfg/output/last_output_args");
+        args.command("-s d cfg/debug/last_debug_args");
     }
 
     public void openDebug() {

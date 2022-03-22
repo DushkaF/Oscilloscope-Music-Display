@@ -7,8 +7,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
+
 public class EdgMain {
     private static double[][] kernel;
+
     public Edges getEdges(Picture picture, InputArgs inputArgs) {
         BufferedImage raw = picture.rawImage;
         Edges edges=new Edges(raw.getHeight(), raw.getWidth());
@@ -17,6 +19,7 @@ public class EdgMain {
         picture.edgeImage=edges;
         return edges;
     }
+
     private void getGrey(Edges ed, BufferedImage raw){
         // Делаем двойной цикл, чтобы обработать каждый пиксель
         for (int i = 0; i < ed.height; i++) {
@@ -43,9 +46,9 @@ public class EdgMain {
             for (int i = 0; i < 2*k+1; i++) {
                 for (int j = 0; j < 2*k+1; j++) {
                     kernel[i][j]=1.0/(2*3.1415*sigma*sigma)*exp(-1.0*(pow(i-k-1,2)+pow(j-k-1,2))/(2*sigma*sigma));
-                    // System.out.print(kernel[i][j]+" ");
+                  //  System.out.print(kernel[i][j]+" ");
                 }
-              //  System.out.println();
+              //System.out.println();
             }
         }
 
