@@ -1,7 +1,7 @@
 package factory.edges;
 
 import factory.Picture;
-import io.args.InputArgs;
+import io.args.EditArgs;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,12 +10,12 @@ import static java.lang.Math.pow;
 
 public class EdgMain {
     private static double[][] kernel;
-
-    public Edges getEdges(Picture picture, InputArgs inputArgs) {
+    private static double lastSigma;
+    public Edges getEdges(Picture picture, EditArgs editArgs) {
         BufferedImage raw = picture.rawImage;
         Edges edges=new Edges(raw.getHeight(), raw.getWidth());
         getGrey(edges,raw);
-        blur(edges, inputArgs.sigma, inputArgs.k);
+        blur(edges, editArgs.sigma, editArgs.k);
         picture.edgeImage=edges;
         return edges;
     }
@@ -41,7 +41,7 @@ public class EdgMain {
     }
 
     private void blur(Edges ed, double sigma, int k) {
-        if(kernel==null||kernel.length!=2*k+1){
+        if(kernel==null||kernel.length!=2*k+1||lastSigma!=sigma){
             kernel=new double[2*k+1][2*k+1];
             for (int i = 0; i < 2*k+1; i++) {
                 for (int j = 0; j < 2*k+1; j++) {
@@ -50,6 +50,7 @@ public class EdgMain {
                 }
               //System.out.println();
             }
+            lastSigma=sigma;
         }
 
         for (int i = 0; i < ed.height; i++) {
@@ -70,5 +71,6 @@ public class EdgMain {
             }
         }
     }
+
 
 }

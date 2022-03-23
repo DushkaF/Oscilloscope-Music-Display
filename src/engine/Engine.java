@@ -12,7 +12,7 @@ import factory.vectors.VecMain;
 
 public class Engine implements Runnable {
     protected boolean running;
-    private final double CHANGE_PERIOD = 1 / 10.0;
+    private final double CHANGE_PERIOD = 1 / 30.0;
 
     private Thread engineThread;
     private Thread consoleThread;
@@ -53,6 +53,7 @@ public class Engine implements Runnable {
         output=new Output(args.outputArgs);
         consoleThread=new Thread(console, "CONSOLE_THREAD");
         engineThread=new Thread(this, "ENGINE_THREAD");
+        consoleThread.setDaemon(true);
         engineThread.start();
         consoleThread.start();
     }
@@ -64,24 +65,34 @@ public class Engine implements Runnable {
         double elapsedTime = 0.0; // elapsed time after last program's tick
         double unrenderedTime = 0.0; // elapsed time after last render
         Map map;
+        byte framesPassed=0;
+        double frameTime=0;
         while(running){
             /*calculating time*/
             time = System.nanoTime() / 1_000_000_000.0;
             elapsedTime = time - lastTime;
             lastTime = time;
             unrenderedTime += elapsedTime;
+            frameTime+=elapsedTime;
+            if(frameTime>1.0){
+                frameTime=0;
+                picture.fps=framesPassed;
+                framesPassed=0;
+            }
             if(unrenderedTime>=CHANGE_PERIOD){
                 unrenderedTime=0;
                 input.getPicture(picture);
-                edgMain.getEdges(picture, args.inputArgs);
+                edgMain.getEdges(picture, args.editArgs);
                 vecMain.getFigures(picture);
                 map=mapMain.getMap(picture);
                 output.draw(map);
+                framesPassed++;
             }
         }
         args.command("-s i cfg/input/last_input_args");
         args.command("-s o cfg/output/last_output_args");
         args.command("-s d cfg/debug/last_debug_args");
+        args.command("-s e cfg/edit/last_edit_args");
     }
 
     public void openDebug() {

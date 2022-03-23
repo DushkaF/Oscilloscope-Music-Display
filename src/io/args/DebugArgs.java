@@ -7,21 +7,6 @@ import java.util.Arrays;
 public class DebugArgs {
     public DebugPictureType[] pictureList;
 
-    @Override
-    public String toString() {
-        return "DebugArgs{" +
-                "pictureList=" + Arrays.toString(pictureList) +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DebugArgs debugArgs = (DebugArgs) o;
-        return Arrays.equals(pictureList, debugArgs.pictureList);
-    }
-
     public DebugArgs(){
         pictureList=new DebugPictureType[4];
         pictureList[0]=DebugPictureType.RAW;
@@ -59,4 +44,20 @@ public class DebugArgs {
         }
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "DebugArgs{" +
+                "pictureList=" + Arrays.toString(pictureList) +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DebugArgs debugArgs = (DebugArgs) o;
+        return Arrays.equals(pictureList, debugArgs.pictureList);
+    }
+
 }

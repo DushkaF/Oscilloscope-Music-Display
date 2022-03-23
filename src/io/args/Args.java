@@ -5,15 +5,17 @@ import com.google.gson.JsonSyntaxException;
 import engine.Engine;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Args {
+
     public InputArgs inputArgs;
     public OutputArgs outputArgs;
     public DebugArgs debugArgs;
+    public EditArgs editArgs;
+
     private Engine engine;
     private static Gson g;
     /**
@@ -33,6 +35,20 @@ public class Args {
             }
         }
     }
+
+    public EditArgs loadEditArgs(String path, boolean createNew ) {
+        try {
+            String s= Files.readString(Path.of(path), StandardCharsets.UTF_8);
+            return g.fromJson(s, EditArgs.class);
+        } catch (IOException | JsonSyntaxException e) {
+            if (createNew) {
+                return new EditArgs();
+            }else {
+                return editArgs;
+            }
+        }
+    }
+
     /**
      * Метод, осуществляющий загрузку параметров ввода из файла , или создание параметров ввода по умолчанию
      * @param path - путь к файлу с параметрами вывода
@@ -66,6 +82,7 @@ public class Args {
         outputArgs = loadOutArgs("cfg/output/last_output_args.json", true);
         inputArgs = loadInArgs("cfg/input/last_input_args.json", true);
         debugArgs= loadDebugArgs("cfg/debug/last_debug_args.json", true);
+        editArgs=loadEditArgs("cfg/edit/last_edit_args.json", true);
         this.engine=engine;
     }
 
@@ -101,6 +118,21 @@ public class Args {
                     break;
             }
                 break;
+              //edit command
+            case "-e":
+                switch(editArgs.command(message)) {
+                    case -1:
+                        System.out.println("Wrong command");
+                        System.out.println(help());
+                        break;
+                    case 1:
+
+                        break;
+                    case 0:
+                        System.out.println("new editArgs applied: "+editArgs);
+                        break;
+                }
+                break;
             //output command
             case "-o":
                 switch(outputArgs.command(message)) {
@@ -116,6 +148,7 @@ public class Args {
                         break;
                 }
                 break;
+
             //saving command
             case "-s":
                 String arrS[]=message.substring(3).split(" ");
@@ -137,7 +170,10 @@ public class Args {
                                 fileWriter.write(g.toJson(debugArgs));
                                 System.out.println("debug args saved successful");
                                 break;
-                            default:
+                            case "e":
+                                fileWriter.write(g.toJson(editArgs));
+                                System.out.println("edit args saved successful");
+                                break;
                         }
                         fileWriter.flush();
                         fileWriter.close();
@@ -175,6 +211,14 @@ public class Args {
                                     System.out.println("loading succesful: "+debugArgs);
                                 }
                                 break;
+                            case "e":
+                                if(loadEditArgs(arrL[1], false).equals(editArgs)){
+                                    System.out.println("Wrong path");
+                                }else{
+                                    editArgs=loadEditArgs(arrL[1], false);
+                                    System.out.println("loading succesful: "+editArgs);
+                                }
+                                break;
                             default:
                                 System.out.println("Wrong command");
                                 System.out.println(help());
@@ -190,6 +234,6 @@ public class Args {
     }
 
     public String info() {
-        return ("IOArgs info: \n"+inputArgs+"\n"+outputArgs+"\n Debug info: \n"+debugArgs);
+        return ("IOArgs info: \n"+inputArgs+"\n"+outputArgs+"\nEdit info: \n"+editArgs+"\n"+"Debug info: \n"+debugArgs);
     }
 }

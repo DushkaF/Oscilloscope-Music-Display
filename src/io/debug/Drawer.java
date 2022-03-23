@@ -4,7 +4,16 @@ import factory.Picture;
 import io.args.DebugArgs;
 import io.args.arg_type.DebugPictureType;
 import org.jsfml.graphics.*;
+import org.jsfml.graphics.Color;
+import org.jsfml.graphics.Font;
+import org.jsfml.graphics.Image;
 import org.jsfml.system.Vector2f;
+
+import javax.swing.text.AttributeSet;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 
 
 public class Drawer {
@@ -13,8 +22,9 @@ public class Drawer {
     private static Vector2f secPos;
     private static Vector2f thirdPos;
     private static Vector2f fourthPos;
-
-    public static void draw(Picture picture, RenderWindow window, DebugArgs dA) throws TextureCreationException {
+    private static Font font;
+    private static Text text;
+    public static void draw(Picture picture, RenderWindow window, DebugArgs dA) throws TextureCreationException, IOException {
         firstPos=new Vector2f(0,0);
         secPos=new Vector2f(window.getSize().x/2, 0);
         thirdPos=new Vector2f(0,window.getSize().y/2);
@@ -60,8 +70,17 @@ public class Drawer {
            // System.out.println(window.getSize()+" "+sprite.getScale()+" "+sprite.getPosition()+" "+sprite.getGlobalBounds());
             window.draw(sprite);
         }
-
-
+        if(font==null){
+            font=new Font();
+            font.loadFromFile(Paths.get("src/io/debug/LucidaSansDemiBold.ttf"));
+        }
+        if(text==null){
+            text= new Text();
+            text.setFont(font);
+            text.setColor(Color.RED);
+            text.setCharacterSize(20);}
+        text.setString(String.valueOf(picture.fps));
+        window.draw(text);
     }
     public static Image getImageFromRaw(Picture picture){
         Image image = new Image();

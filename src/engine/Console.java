@@ -31,6 +31,7 @@ class Console implements Runnable {
                     case "-o ":
                     case "-s ":
                     case "-l ":
+                    case "-e ":
                         engine.args.command(message);
                         break;
                     case "-in":

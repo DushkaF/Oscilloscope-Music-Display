@@ -8,6 +8,7 @@ import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class DebugWindow implements Runnable{
     private RenderWindow window;
@@ -30,7 +31,7 @@ public class DebugWindow implements Runnable{
             window.clear();
             try {
                 Drawer.draw(picture, window, debugArgs);
-            } catch (TextureCreationException e) {
+            } catch (TextureCreationException | IOException e) {
                 e.printStackTrace();
             }
             window.display();

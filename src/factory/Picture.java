@@ -9,4 +9,5 @@ public class Picture {
     public BufferedImage rawImage;
     public Edges edgeImage;
     public Figures figures;
+    public byte fps;
 }
