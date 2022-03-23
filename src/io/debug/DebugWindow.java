@@ -4,6 +4,8 @@ import factory.Picture;
 import io.args.DebugArgs;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.TextureCreationException;
+import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
@@ -26,11 +28,12 @@ public class DebugWindow implements Runnable{
         window = new RenderWindow();
         window.create(new VideoMode(toolkit.getScreenSize().width-320,toolkit.getScreenSize().height-180), "Oscilloscope_Music_Display_Debug");
         window.setFramerateLimit(30);
+        Vector2i size = window.getSize();
         while (window.isOpen()) {
             // drawing part (redrawing for next frame)
             window.clear();
             try {
-                Drawer.draw(picture, window, debugArgs);
+                Drawer.draw(picture, window, debugArgs, size);
             } catch (TextureCreationException | IOException e) {
                 e.printStackTrace();
             }

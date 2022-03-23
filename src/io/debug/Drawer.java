@@ -8,6 +8,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Font;
 import org.jsfml.graphics.Image;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 import javax.swing.text.AttributeSet;
 import java.awt.*;
@@ -24,11 +25,11 @@ public class Drawer {
     private static Vector2f fourthPos;
     private static Font font;
     private static Text text;
-    public static void draw(Picture picture, RenderWindow window, DebugArgs dA) throws TextureCreationException, IOException {
+    public static void draw(Picture picture, RenderWindow window, DebugArgs dA, Vector2i size) throws TextureCreationException, IOException {
         firstPos=new Vector2f(0,0);
-        secPos=new Vector2f(window.getSize().x/2, 0);
-        thirdPos=new Vector2f(0,window.getSize().y/2);
-        fourthPos=new Vector2f(window.getSize().x/2,window.getSize().y/2);
+        secPos=new Vector2f(size.x/2, 0);
+        thirdPos=new Vector2f(0,size.y/2);
+        fourthPos=new Vector2f(size.x/2,size.y/2);
 
         Texture texture=new Texture();
         Sprite sprite=new Sprite();
@@ -64,11 +65,11 @@ public class Drawer {
 
                     break;
             }
-            Vector2f scale=new Vector2f(1.0f*window.getSize().x/(2*texture.getSize().x),1.0f*window.getSize().y/(2*texture.getSize().y));
+            //Vector2f scale=new Vector2f(1.0f*window.getSize().x/(2*texture.getSize().x),1.0f*window.getSize().y/(2*texture.getSize().y));
+            Vector2f scale =new Vector2f(1.0f*size.x/(2*texture.getSize().x),1.0f*size.y/(2*texture.getSize().y));
+
             sprite.setScale(scale);
-           // System.out.println( );
-           // System.out.println(window.getSize()+" "+sprite.getScale()+" "+sprite.getPosition()+" "+sprite.getGlobalBounds());
-            window.draw(sprite);
+           window.draw(sprite);
         }
         if(font==null){
             font=new Font();
