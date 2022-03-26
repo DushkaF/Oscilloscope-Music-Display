@@ -1,1 +1,1 @@
-{"k":3,"sigma":1.4}
+{"k":4,"sigma":0.4,"highThresholdRatio":0.9,"lowThresholdRatio":0.1}

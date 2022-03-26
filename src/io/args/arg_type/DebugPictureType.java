@@ -1,5 +1,5 @@
 package io.args.arg_type;
 
 public enum DebugPictureType {
-    RAW, GREY, BLUR, GRADIENT, EDGED, FIGURES
+    RAW, GREY, BLUR, INTENSE, SUPPRESSED, THRESHOLD, EDGED, FIGURES
 }

@@ -64,7 +64,7 @@ public class Engine implements Runnable {
         double lastTime = System.nanoTime() / 1000_000_000.0; //last got time
         double elapsedTime = 0.0; // elapsed time after last program's tick
         double unrenderedTime = 0.0; // elapsed time after last render
-        Map map;
+        Map map = null;
         byte framesPassed=0;
         double frameTime=0;
         while(running){

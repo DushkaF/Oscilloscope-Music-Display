@@ -10,9 +10,6 @@ import org.jsfml.graphics.Image;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
-import javax.swing.text.AttributeSet;
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -95,7 +92,8 @@ public class Drawer {
     }
     private static Image getImageFromEdges(Picture picture, DebugPictureType debugPictureType){
         Image image = new Image();
-        int matrix[][] =null;
+        short matrix[][] =null;
+        boolean edgeMatrix[][]=null;
         switch (debugPictureType) {
             case GREY:
                 matrix = picture.edgeImage.greyPixels;
@@ -103,22 +101,40 @@ public class Drawer {
             case BLUR:
                 matrix = picture.edgeImage.blurredPixels;
                 break;
-            case GRADIENT:
-                matrix = picture.edgeImage.gradientPixels;
+            case INTENSE:
+                matrix = picture.edgeImage.intensePixels;
                 break;
+            case SUPPRESSED:
+                matrix=picture.edgeImage.suppressedPixels;
+                break;
+            case THRESHOLD:
+                matrix=picture.edgeImage.thresholdPixels;
             case EDGED:
-                matrix = picture.edgeImage.edgedPixels;
+                edgeMatrix = picture.edgeImage.edgedPixels;
                 break;
         }
-        int x=matrix[0].length;
-        int y=matrix.length;
-        image.create(x,y);
-        for (int i = 0; i < y; i++) {
-            for (int j = 0; j < x; j++) {
-                image.setPixel(j,i,new Color(matrix[i][j],matrix[i][j],matrix[i][j]));
-               // System.out.print(matrix[i][j]+" ");
+        if(matrix!=null){
+            int x=matrix[0].length;
+            int y=matrix.length;
+            image.create(x,y);
+            for (int i = 0; i < y; i++) {
+                for (int j = 0; j < x; j++) {
+                    image.setPixel(j,i,new Color(matrix[i][j],matrix[i][j],matrix[i][j]));
+                   // System.out.print(matrix[i][j]+" ");
+                }
+               // System.out.println();
             }
-           // System.out.println();
+        }else{
+            int x=edgeMatrix[0].length;
+            int y=edgeMatrix.length;
+            image.create(x,y);
+            for (int i = 0; i < y; i++) {
+                for (int j = 0; j < x; j++) {
+                    image.setPixel(j,i,edgeMatrix[i][j]?new Color(255,255,255):new Color(0,0,0));
+                    // System.out.print(matrix[i][j]+" ");
+                }
+                // System.out.println();
+            }
         }
         return image;
     }
