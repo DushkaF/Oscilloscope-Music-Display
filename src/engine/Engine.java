@@ -87,6 +87,7 @@ public class Engine implements Runnable {
                 vecMain.getFigures(picture);
                 map=mapMain.getMap(picture);
                 output.draw(map);
+                picture.debugRendered=false;
                 }
                 framesPassed++;
                 picture.isNew=false;

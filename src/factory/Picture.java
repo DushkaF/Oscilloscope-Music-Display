@@ -11,4 +11,5 @@ public class Picture {
     public Figures figures;
     public byte fps;
     public boolean isNew;
+    public boolean debugRendered;
 }

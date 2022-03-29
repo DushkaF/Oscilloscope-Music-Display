@@ -20,53 +20,73 @@ public class Drawer {
     private static Vector2f secPos;
     private static Vector2f thirdPos;
     private static Vector2f fourthPos;
+
+    private static Sprite firstSprite=new Sprite();
+    private static Sprite secondSprite=new Sprite();
+    private static Sprite thirdSprite=new Sprite();
+    private static Sprite fourthSprite=new Sprite();
+
     private static Font font;
     private static Text text;
+
     public static void draw(Picture picture, RenderWindow window, DebugArgs dA, Vector2i size) throws TextureCreationException, IOException {
         firstPos=new Vector2f(0,0);
         secPos=new Vector2f(size.x/2, 0);
         thirdPos=new Vector2f(0,size.y/2);
         fourthPos=new Vector2f(size.x/2,size.y/2);
-
-        Texture texture=new Texture();
         Sprite sprite=new Sprite();
 
-        for(int i=0;i<4;i++){
-            switch (dA.pictureList[i]){
-                case RAW:
-                    texture.loadFromImage(getImageFromRaw(picture));
-                    break;
-                case FIGURES:
-                    texture.loadFromImage(getImageFromFigures(picture));
-                    break;
-                default:
-                    texture.loadFromImage(getImageFromEdges(picture, dA.pictureList[i]));
-                    break;
+        if(!picture.debugRendered) {
+            for (int i = 0; i < 4; i++) {
+                Texture texture=new Texture();
+                switch (dA.pictureList[i]) {
+                    case RAW:
+                        texture.loadFromImage(getImageFromRaw(picture));
+                        break;
+                    case FIGURES:
+                        texture.loadFromImage(getImageFromFigures(picture));
+                        break;
+                    default:
+                        texture.loadFromImage(getImageFromEdges(picture, dA.pictureList[i]));
+                        break;
+                }
+                sprite.setTexture(texture);
+                switch (i) {
+                    case 0:
+                        sprite.setPosition(firstPos);
+                        firstSprite.setPosition(firstPos);
+                        firstSprite.setTexture(texture);
+                        break;
+                    case 1:
+                        sprite.setPosition(secPos);
+                        secondSprite.setPosition(secPos);
+                        secondSprite.setTexture(texture);
+                        break;
+                    case 2:
+                        sprite.setPosition(thirdPos);
+                        thirdSprite.setPosition(thirdPos);
+                        thirdSprite.setTexture(texture);
+                        break;
+                    case 3:
+                        sprite.setPosition(fourthPos);
+                        fourthSprite.setPosition(fourthPos);
+                        fourthSprite.setTexture(texture);
+                        break;
+                }
+                Vector2f scale = new Vector2f(1.0f * size.x / (2 * texture.getSize().x), 1.0f * size.y / (2 * texture.getSize().y));
+                sprite.setScale(scale);
+                firstSprite.setScale(scale);
+                secondSprite.setScale(scale);
+                thirdSprite.setScale(scale);
+                fourthSprite.setScale(scale);
+                window.draw(sprite);
             }
-            sprite.setTexture(texture);
-            switch (i){
-                case 0:
-                    sprite.setPosition(firstPos);
-
-                    break;
-                case 1:
-                    sprite.setPosition(secPos);
-
-                    break;
-                case 2:
-                    sprite.setPosition(thirdPos);
-
-                    break;
-                case 3:
-                    sprite.setPosition(fourthPos);
-
-                    break;
-            }
-            //Vector2f scale=new Vector2f(1.0f*window.getSize().x/(2*texture.getSize().x),1.0f*window.getSize().y/(2*texture.getSize().y));
-            Vector2f scale =new Vector2f(1.0f*size.x/(2*texture.getSize().x),1.0f*size.y/(2*texture.getSize().y));
-
-            sprite.setScale(scale);
-           window.draw(sprite);
+            picture.debugRendered=true;
+        }else{
+            window.draw(firstSprite);
+            window.draw(secondSprite);
+            window.draw(thirdSprite);
+            window.draw(fourthSprite);
         }
         if(font==null){
             font=new Font();
@@ -79,6 +99,7 @@ public class Drawer {
             text.setCharacterSize(20);}
         text.setString(String.valueOf(picture.fps));
         window.draw(text);
+
     }
     public static Image getImageFromRaw(Picture picture){
         Image image = new Image();
