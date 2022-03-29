@@ -31,6 +31,7 @@ public class Input {
                                 picture.rawImage = ImageIO.read(file);
                                 lastPath= file.getPath();
                                 System.out.println("loaded raw image from file: "+file.getPath());
+                                picture.isNew=true;
                             } catch (IOException e) {
                                 picture.rawImage=null;
                                 System.out.println("Couldn't load raw image from file:"+file.getPath());
@@ -43,7 +44,8 @@ public class Input {
                                 ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
                                 picture.edgeImage=(Edges) objectInputStream.readObject();
                                 lastPath= file.getPath();
-                             //   System.out.println("loaded edged image from file: "+file.getPath());
+                                System.out.println("loaded edged image from file: "+file.getPath());
+                                picture.isNew=true;
                             } catch (IOException | ClassNotFoundException e) {
                                 picture.edgeImage=null;
                                 System.out.println("Couldn't load edged image from file:"+file.getPath());
@@ -56,7 +58,8 @@ public class Input {
                                 ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
                                 picture.figures =(Figures) objectInputStream.readObject();
                                 lastPath= file.getPath();
-                            //    System.out.println("loaded vectorized image from file: "+file.getPath());
+                                System.out.println("loaded vectorized image from file: "+file.getPath());
+                                picture.isNew=true;
                             } catch (IOException | ClassNotFoundException e) {
                                 picture.figures=null;
                                 System.out.println("Couldn't load vectorized image from file:"+file.getPath());

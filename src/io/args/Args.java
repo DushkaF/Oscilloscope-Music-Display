@@ -130,6 +130,7 @@ public class Args {
                         break;
                     case 0:
                         System.out.println("new editArgs applied: "+editArgs);
+                        engine.picture.isNew=true;
                         break;
                 }
                 break;

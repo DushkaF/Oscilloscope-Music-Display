@@ -10,4 +10,5 @@ public class Picture {
     public Edges edgeImage;
     public Figures figures;
     public byte fps;
+    public boolean isNew;
 }

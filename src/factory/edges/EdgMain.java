@@ -110,15 +110,15 @@ public class EdgMain {
                     }
                 }
                 angle=atan(1.0*Gy/Gx)+(Gx>=0?0:PI);
-                if(angle<-3*PI/8)edges.angles[i][j]=VERTICAL;
-                if(angle>-3*PI/8&&angle<-PI/8)edges.angles[i][j]=DIAG;
-                if(angle>-PI/8&&angle<PI/8)edges.angles[i][j]= HORIZONTAL;
-                if(angle>PI/8&&angle<3*PI/8)edges.angles[i][j]= SEC_DIAG;
-                if(angle>3*PI/8&&angle<5*PI/8)edges.angles[i][j]= VERTICAL;
-                if(angle>5*PI/8&&angle<7*PI/8)edges.angles[i][j]= DIAG;
-                if(angle>7*PI/8&&angle<9*PI/8)edges.angles[i][j]=HORIZONTAL;
-                if(angle>9*PI/8&&angle<11*PI/8)edges.angles[i][j]=SEC_DIAG;
-                if(angle>11*PI/8)edges.angles[i][j]=VERTICAL;
+                if(angle<-3*PI/8)edges.angles[i][j]=HORIZONTAL;
+                if(angle>-3*PI/8&&angle<-PI/8)edges.angles[i][j]=SEC_DIAG;
+                if(angle>-PI/8&&angle<PI/8)edges.angles[i][j]= VERTICAL;
+                if(angle>PI/8&&angle<3*PI/8)edges.angles[i][j]= DIAG;
+                if(angle>3*PI/8&&angle<5*PI/8)edges.angles[i][j]= HORIZONTAL;
+                if(angle>5*PI/8&&angle<7*PI/8)edges.angles[i][j]= SEC_DIAG;
+                if(angle>7*PI/8&&angle<9*PI/8)edges.angles[i][j]=VERTICAL;
+                if(angle>9*PI/8&&angle<11*PI/8)edges.angles[i][j]=DIAG;
+                if(angle>11*PI/8)edges.angles[i][j]=HORIZONTAL;
                 edges.intensePixels[i][j]= (short) sqrt(Gx*Gx+Gy*Gy);
             }
         }

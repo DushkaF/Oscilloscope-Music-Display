@@ -29,7 +29,7 @@ public class Engine implements Runnable {
     private VecMain vecMain;
     private MapMain mapMain;
 
-    private Picture picture;
+    public Picture picture;
     protected Args args;
 
     public static void main(String[] args) {
@@ -82,11 +82,14 @@ public class Engine implements Runnable {
             if(unrenderedTime>=CHANGE_PERIOD){
                 unrenderedTime=0;
                 input.getPicture(picture);
+                if(picture.isNew){
                 edgMain.getEdges(picture, args.editArgs);
                 vecMain.getFigures(picture);
                 map=mapMain.getMap(picture);
                 output.draw(map);
+                }
                 framesPassed++;
+                picture.isNew=false;
             }
         }
         args.command("-s i cfg/input/last_input_args");
