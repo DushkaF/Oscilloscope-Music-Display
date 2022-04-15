@@ -1,17 +1,21 @@
 package io.args;
 
+import java.util.Objects;
+
 public class EditArgs {
 
     public int k;
     public double sigma;
     public double highThresholdRatio;
     public double lowThresholdRatio;
+    public byte numOfHyst;
 
     public EditArgs(){
         k=2;
         sigma=1;
         highThresholdRatio=0.7;
         lowThresholdRatio=0.3;
+        numOfHyst=1;
     }
 
     public byte command(String message) {
@@ -61,9 +65,27 @@ public class EditArgs {
                         return -1;
                     }
                     break;
+                case "numOfHyst":
+                    byte num = -1;
+                    try {
+                        num = Byte.parseByte(ms[1]);
+                        if (num < 0 || num > 100) return -1;
+                        numOfHyst = num;
+                    } catch (NumberFormatException e) {
+                        return -1;
+                    }
+                    break;
             }
         }
         return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EditArgs editArgs = (EditArgs) o;
+        return k == editArgs.k && Double.compare(editArgs.sigma, sigma) == 0 && Double.compare(editArgs.highThresholdRatio, highThresholdRatio) == 0 && Double.compare(editArgs.lowThresholdRatio, lowThresholdRatio) == 0 && numOfHyst == editArgs.numOfHyst;
     }
 
     @Override
@@ -73,15 +95,7 @@ public class EditArgs {
                 ", sigma=" + sigma +
                 ", highThresholdRatio=" + highThresholdRatio +
                 ", lowThresholdRatio=" + lowThresholdRatio +
+                ", numOfHyst=" + numOfHyst +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EditArgs editArgs = (EditArgs) o;
-        return k == editArgs.k && Double.compare(editArgs.sigma, sigma) == 0;
-    }
-
 }

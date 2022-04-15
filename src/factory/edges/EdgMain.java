@@ -33,9 +33,12 @@ public class EdgMain {
         getGradient(edges);
         supress(edges);
         threshold(edges, editArgs.highThresholdRatio, editArgs.lowThresholdRatio);
+        hysteresis(edges, editArgs.numOfHyst);
         picture.edgeImage=edges;
+        
         return edges;
     }
+
 
     private void getGrey(Edges edges, BufferedImage raw){
         // Делаем двойной цикл, чтобы обработать каждый пиксель
@@ -161,8 +164,30 @@ public class EdgMain {
         for (int i = 0; i < edges.height; i++) {
             for (int j = 0; j < edges.width; j++) {
                short value=edges.suppressedPixels[i][j];
-               edges.thresholdPixels[i][j]=value>highThreshold?255:value<lowThreshold?0:value;
+               edges.thresholdPixels[i][j]= (short) (value>highThreshold?255:value<lowThreshold?0:128);
             }
         }
     }
+    private void hysteresis(Edges edges, byte numOfHyst) {
+        boolean hasStrong=false;
+        for (int num=0;num<numOfHyst;num++){
+            for (int i = 0; i < edges.height; i++) {
+                for (int j = 0; j < edges.width; j++) {
+                    hasStrong=false;
+                    for(int i2=-1;i2<2;i2++){
+                        for(int j2=-1;j2<2;j2++){
+                            if(i2+i>0&&i2+i<edges.height &&j2+j>0&&j2+j<edges.width){
+                                if (edges.thresholdPixels[i+i2][j+j2]==255||edges.edgedPixels[i+i2][j+j2]){
+                                    hasStrong=true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (hasStrong&&edges.thresholdPixels[i][j]>=128)edges.edgedPixels[i][j]=true;
+                }
+            }
+        }
+    }
+
 }
