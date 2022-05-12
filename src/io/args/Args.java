@@ -100,6 +100,7 @@ public class Args {
                         break;
                     case 0:
                         System.out.println("new debugArgs applied: "+debugArgs);
+                        engine.picture.isNew=true;
                         break;
                 }
                 break;

@@ -1,7 +1,9 @@
 package engine;
 
 import factory.Picture;
+import factory.edges.EdgePicture;
 import factory.map.Map;
+import factory.vectors.VectorPicture;
 import io.args.Args;
 import io.debug.DebugWindow;
 import io.input.Input;
@@ -67,6 +69,8 @@ public class Engine implements Runnable {
         Map map = null;
         byte framesPassed=0;
         double frameTime=0;
+        EdgePicture edgePicture;
+        VectorPicture vectorPicture;
         while(running){
             /*calculating time*/
             time = System.nanoTime() / 1_000_000_000.0;
@@ -83,9 +87,9 @@ public class Engine implements Runnable {
                 unrenderedTime=0;
                 input.getPicture(picture);
                 if(picture.isNew){
-                edgMain.getEdges(picture, args.editArgs);
-                vecMain.getFigures(picture);
-                map=mapMain.getMap(picture);
+                edgePicture=edgMain.getEdges(picture, args.editArgs);
+                vectorPicture=vecMain.getFigures(edgePicture);
+                map=mapMain.getMap(vectorPicture);
                 output.draw(map);
                 picture.debugRendered=false;
                 }

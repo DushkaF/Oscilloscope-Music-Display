@@ -1,14 +1,14 @@
 package factory;
 
-import factory.edges.Edges;
-import factory.vectors.Figures;
+import factory.edges.EdgePicture;
+import factory.vectors.VectorPicture;
 
 import java.awt.image.BufferedImage;
 
 public class Picture {
     public BufferedImage rawImage;
-    public Edges edgeImage;
-    public Figures figures;
+    public EdgePicture edgeImage;
+    public VectorPicture figures;
     public byte fps;
     public boolean isNew;
     public boolean debugRendered;

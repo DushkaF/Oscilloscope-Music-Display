@@ -1,8 +1,8 @@
 package io.input;
 
 import factory.Picture;
-import factory.edges.Edges;
-import factory.vectors.Figures;
+import factory.edges.EdgePicture;
+import factory.vectors.VectorPicture;
 import io.args.InputArgs;
 
 import javax.imageio.ImageIO;
@@ -42,7 +42,7 @@ public class Input {
                         if(!file.getPath().equals(lastPath)) {
                             try {
                                 ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
-                                picture.edgeImage=(Edges) objectInputStream.readObject();
+                                picture.edgeImage=(EdgePicture) objectInputStream.readObject();
                                 lastPath= file.getPath();
                                 System.out.println("loaded edged image from file: "+file.getPath());
                                 picture.isNew=true;
@@ -56,7 +56,7 @@ public class Input {
                         if(!file.getPath().equals(lastPath)) {
                             try {
                                 ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
-                                picture.figures =(Figures) objectInputStream.readObject();
+                                picture.figures =(VectorPicture) objectInputStream.readObject();
                                 lastPath= file.getPath();
                                 System.out.println("loaded vectorized image from file: "+file.getPath());
                                 picture.isNew=true;

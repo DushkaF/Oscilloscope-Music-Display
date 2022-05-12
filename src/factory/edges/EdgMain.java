@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.round;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 public class EdgMain {
@@ -24,10 +23,10 @@ public class EdgMain {
 
     private static short maxIntentse;
 
-    public Edges getEdges(Picture picture, EditArgs editArgs) {
+    public EdgePicture getEdges(Picture picture, EditArgs editArgs) {
         maxIntentse=0;
         BufferedImage raw = picture.rawImage;
-        Edges edges=new Edges(raw.getHeight(), raw.getWidth());
+        EdgePicture edges=new EdgePicture(raw.getHeight(), raw.getWidth());
         getGrey(edges,raw);
         blur(edges, editArgs.sigma, editArgs.k);
         getGradient(edges);
@@ -40,7 +39,7 @@ public class EdgMain {
     }
 
 
-    private void getGrey(Edges edges, BufferedImage raw){
+    private void getGrey(EdgePicture edges, BufferedImage raw){
         // Делаем двойной цикл, чтобы обработать каждый пиксель
         for (int i = 0; i < edges.height; i++) {
             for (int j = 0; j < edges.width; j++) {
@@ -60,7 +59,7 @@ public class EdgMain {
         }
     }
 
-    private void blur(Edges edges, double sigma, int k) {
+    private void blur(EdgePicture edges, double sigma, int k) {
         if(blurKernel ==null|| blurKernel.length!=2*k+1||lastSigma!=sigma){
             blurKernel =new double[2*k+1][2*k+1];
             for (int i = 0; i < 2*k+1; i++) {
@@ -91,7 +90,7 @@ public class EdgMain {
             }
         }
     }
-    private void getGradient(Edges edges){
+    private void getGradient(EdgePicture edges){
         if(gradientKernelX ==null) {
             gradientKernelX = new int[][] {{-1,-2,-1},{0,0,0},{1,2,1}};
         }
@@ -113,26 +112,35 @@ public class EdgMain {
                     }
                 }
                 angle=atan(1.0*Gy/Gx)+(Gx>=0?0:PI);
-                if(angle<-3*PI/8)edges.angles[i][j]=HORIZONTAL;
-                if(angle>-3*PI/8&&angle<-PI/8)edges.angles[i][j]=SEC_DIAG;
-                if(angle>-PI/8&&angle<PI/8)edges.angles[i][j]= VERTICAL;
-                if(angle>PI/8&&angle<3*PI/8)edges.angles[i][j]= DIAG;
-                if(angle>3*PI/8&&angle<5*PI/8)edges.angles[i][j]= HORIZONTAL;
-                if(angle>5*PI/8&&angle<7*PI/8)edges.angles[i][j]= SEC_DIAG;
-                if(angle>7*PI/8&&angle<9*PI/8)edges.angles[i][j]=VERTICAL;
-                if(angle>9*PI/8&&angle<11*PI/8)edges.angles[i][j]=DIAG;
-                if(angle>11*PI/8)edges.angles[i][j]=HORIZONTAL;
+                // System.out.print(Math.toDegrees(angle)+"\t");
+                if(angle<-3*PI/8)edges.directions[i][j]=HORIZONTAL;
+                if(angle>-3*PI/8&&angle<-PI/8)edges.directions[i][j]=SEC_DIAG;
+                if(angle>-PI/8&&angle<PI/8)edges.directions[i][j]= VERTICAL;
+                if(angle>PI/8&&angle<3*PI/8)edges.directions[i][j]= DIAG;
+                if(angle>3*PI/8&&angle<5*PI/8)edges.directions[i][j]= HORIZONTAL;
+                if(angle>5*PI/8&&angle<7*PI/8)edges.directions[i][j]= SEC_DIAG;
+                if(angle>7*PI/8&&angle<9*PI/8)edges.directions[i][j]=VERTICAL;
+                if(angle>9*PI/8&&angle<11*PI/8)edges.directions[i][j]=DIAG;
+                if(angle>11*PI/8)edges.directions[i][j]=HORIZONTAL;
                 edges.intensePixels[i][j]= (short) sqrt(Gx*Gx+Gy*Gy);
             }
+          //  System.out.println();
         }
+       /* for (int i = 0; i < edges.height; i++) {
+            for (int j = 0; j < edges.width; j++) {
+                System.out.print(edges.angles[i][j]+"\t");
+            }
+            System.out.println();
+        }*/
     }
 
-    private void supress(Edges edges){
+
+    private void supress(EdgePicture edges){
         for (int i = 0; i < edges.height; i++) {
             for (int j = 0; j < edges.width; j++) {
                 short p;
                 short r;
-                switch (edges.angles[i][j]){
+                switch (edges.directions[i][j]){
                     case VERTICAL:
                         p=((i+1)<edges.height)? edges.intensePixels[i+1][j]:0;
                         r=((i-1)>=0)? edges.intensePixels[i-1][j]:0;
@@ -158,7 +166,7 @@ public class EdgMain {
             }
         }
     }
-    private void threshold(Edges edges, double highRatio, double lowRatio){
+    private void threshold(EdgePicture edges, double highRatio, double lowRatio){
         short highThreshold = (short) (highRatio*maxIntentse);
         short lowThreshold = (short) (lowRatio*maxIntentse);
         for (int i = 0; i < edges.height; i++) {
@@ -168,7 +176,7 @@ public class EdgMain {
             }
         }
     }
-    private void hysteresis(Edges edges, byte numOfHyst) {
+    private void hysteresis(EdgePicture edges, byte numOfHyst) {
         boolean hasStrong=false;
         for (int num=0;num<numOfHyst;num++){
             for (int i = 0; i < edges.height; i++) {
