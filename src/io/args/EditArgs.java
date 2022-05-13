@@ -10,6 +10,8 @@ public class EditArgs {
     public double lowThresholdRatio;
     public byte numOfHyst;
     public double tau;
+    public int regMinSize;
+    public short numOfTries;
 
     public EditArgs(){
         k=2;
@@ -18,6 +20,8 @@ public class EditArgs {
         lowThresholdRatio=0.3;
         numOfHyst=1;
         tau=toRadians(11.25);
+        regMinSize=100;
+        numOfTries=0;
     }
 
     public byte command(String message) {
@@ -80,9 +84,29 @@ public class EditArgs {
                 case "tau":
                     double t = -1;
                     try {
-                        num = Byte.parseByte(ms[1]);
-                        if (num < 0 || num > 45) return -1;
-                        tau = t;
+                        t = Double.parseDouble(ms[1]);
+                        if (t < 0 || t > 45) return -1;
+                        tau = toRadians(t);
+                    } catch (NumberFormatException e) {
+                        return -1;
+                    }
+                    break;
+                case "regMinSize":
+                    int rgm = -1;
+                    try {
+                        rgm = Integer.parseInt(ms[1]);
+                        if (rgm < 0 || rgm > 100000) return -1;
+                        regMinSize = rgm;
+                    } catch (NumberFormatException e) {
+                        return -1;
+                    }
+                    break;
+                case "numOfTries":
+                    short not = -1;
+                    try {
+                        not = Short.parseShort(ms[1]);
+                        if (not < 0 || not > 1000) return -1;
+                        numOfTries = not;
                     } catch (NumberFormatException e) {
                         return -1;
                     }
@@ -109,6 +133,8 @@ public class EditArgs {
                 ", lowThresholdRatio=" + lowThresholdRatio +
                 ", numOfHyst=" + numOfHyst +
                 ", tau=" + tau +
+                ", regMinSize=" + regMinSize +
+                ", numOfTries=" + numOfTries +
                 '}';
     }
 }

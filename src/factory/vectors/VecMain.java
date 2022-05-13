@@ -11,28 +11,19 @@ import static java.lang.Math.*;
 public class VecMain {
     private static int[][] gradientKernelX;
     private static int[][] gradientKernelY;
+    private static int regMinSize;
+    private static double tau;
+    private static short numOfTries;
 
     public VectorPicture getFigures(Picture picture, EditArgs editArgs) {
+        regMinSize=editArgs.regMinSize;
+        tau=editArgs.tau;
+        numOfTries=editArgs.numOfTries;
         EdgePicture edges=picture.edgeImage;
         VectorPicture vecPic=new VectorPicture(edges.height, edges.width, edges.edgedPixels);
-        vecPic.levelLinedpixels=getLevelLines(vecPic);
+        getLevelLines(vecPic);
         vecPic.regions=new LinkedList<>();
-        vecPic.regions=getRegions(vecPic, editArgs.tau);
-
-        /*for (int i = 0; i < vecPic.height; i++) {
-            for (int j = 0; j < vecPic.width; j++) {
-                System.out.print(vecPic.levelLinedpixels[i][j].angle+"\t");
-            }
-            System.out.println();
-        }
-        Region region;
-        for (int i = 0; i < vecPic.regions.size(); i++) {
-           region= vecPic.regions.get(i);
-            for (int j = 0; i < region.size(); j++) {
-                System.out.println(region.getPoint(j));
-            }
-            System.out.println("new region");
-        }*/
+        getRegions(vecPic);
         picture.vecImage=vecPic;
         return vecPic;
     }
@@ -62,7 +53,7 @@ public class VecMain {
                         }
                     }
                 }
-                points[i][j]=new Point(i,j,atan(1.0*Gy/Gx),(short) sqrt(Gx*Gx+Gy*Gy));
+                points[i][j]=new Point(j,i,atan(1.0*Gy/Gx),(short) sqrt(Gx*Gx+Gy*Gy));
                 if(points[i][j].magnitude>max)max= (short) points[i][j].magnitude;
                 if(points[i][j].magnitude<min)min= (short)points[i][j].magnitude;
             }
@@ -77,10 +68,12 @@ public class VecMain {
         }
         vectorPicture.maxMagnitude=max;
         vectorPicture.minMagnitude=min;
+        vectorPicture.levelLinedpixels=points;
+
         return points;
     }
 
-    private LinkedList<Region> getRegions(VectorPicture vecPic, double tau) {
+    private LinkedList<Region> getRegions(VectorPicture vecPic) {
         LinkedList<Region> regions=new LinkedList<>();
         LinkedList<Point> bins[]= new LinkedList[11];
         for (int i = 0; i < vecPic.height; i++) {
@@ -97,20 +90,22 @@ public class VecMain {
                     region.regionAngle=bins[i].peek().angle;
                     double Sx=cos(region.regionAngle);
                     double Sy=sin(region.regionAngle);
-                    growRegion(bins[i].poll(), region, vecPic, Sx, Sy, tau);
-                    if(region.size()>=vecPic.height* vecPic.width/10000)regions.add(region);
+                    growRegion(bins[i].poll(), region, vecPic, Sx, Sy);
+                    if(region.size()>=regMinSize)regions.add(region);
                 }
             }
         }
+        regroupRegions(vecPic,regions);
+        vecPic.regions=regions;
 
         return regions;
     }
 
-    private void growRegion(Point point, Region region, VectorPicture vecPic, double sx, double sy, double tau) {
+    private void growRegion(Point point, Region region, VectorPicture vecPic, double sx, double sy) {
     //    System.out.println(point);
     //    System.out.println(region.regionAngle);
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
                 if (!(point.x+j<0||point.x+j>= vecPic.width||point.y+i<0||point.y+i>=vecPic.height)){
                     if(!vecPic.levelLinedpixels[point.y+i][point.x+j].used){
                         if(abs(region.regionAngle-vecPic.levelLinedpixels[point.y+i][point.x+j].angle)<tau){
@@ -118,9 +113,74 @@ public class VecMain {
                         //    System.out.println("added point");
                             vecPic.levelLinedpixels[point.y+i][point.x+j].used=true;
                             sx+=cos(vecPic.levelLinedpixels[point.y+i][point.x+j].angle);
-                            sy=sin(vecPic.levelLinedpixels[point.y+i][point.x+j].angle);
+                            sy+=sin(vecPic.levelLinedpixels[point.y+i][point.x+j].angle);
                             region.regionAngle=atan(sy/sx);
-                            growRegion(vecPic.levelLinedpixels[point.y+i][point.x+j], region, vecPic, sx,sy,tau);
+                            growRegion(vecPic.levelLinedpixels[point.y+i][point.x+j], region, vecPic, sx,sy);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void regroupRegions(VectorPicture vectorPicture, LinkedList<Region> regions){
+        for (int numTry = 0; numTry < numOfTries; numTry++) {
+            int h=vectorPicture.height/100+1;
+            int w=vectorPicture.width/100+1;
+            LinkedList<Region>[][] cells=new LinkedList[h][w];
+            for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                    cells[i][j]=new LinkedList<>();
+                }
+            }
+            int size=regions.size();
+            for (int i = 0; i < size; i++) {
+                    Region region=regions.poll();
+                    region.used=false;
+                    Point center=region.getCenter();
+                    cells[center.y/100][center.x/100].add(region);
+                    region.icellCoord=center.y/100;
+                    region.jcellCoord=center.x/100;
+            }
+            for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                    for (int k = 0; k < cells[i][j].size(); k++) {
+                        Region region =cells[i][j].get(k);
+                        if(!region.used){
+                            region.used=true;
+                            LinkedList<Region> newReg=new LinkedList<>();
+                            newReg.add(region);
+                            regrowRegion(cells, region, i, j, newReg, region.regionAngle);
+                            while (newReg.size()!=1){
+                                Region region1=newReg.poll();
+                                newReg.getLast().addRegion(region1);
+                                cells[region1.icellCoord][region1.jcellCoord].remove(region1);
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < h; i++) {
+                for (int j = 0; j < w; j++) {
+                    for (int k = 0; k < cells[i][j].size(); k++) {
+                        regions.add(cells[i][j].get(k));
+                    }
+                }
+            }
+        }
+    }
+
+    private void regrowRegion(LinkedList<Region>[][] cells, Region region, int icell, int jcell, LinkedList<Region> newRegion, double newAngle) {
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if(!(icell+i<0||icell+i>=cells.length||jcell+j<0||jcell+j>=cells[0].length)){
+                    for (int k = 0; k < cells[icell+i][jcell+j].size(); k++) {
+                        Region region1=cells[icell+i][jcell+j].get(k);
+                        if(!region1.used&&abs(region1.regionAngle-newAngle)<=tau){
+                            newAngle=(newAngle*newRegion.size()+region1.regionAngle)/(newRegion.size()+1);
+                            newRegion.add(region1);
+                            region1.used=true;
+                            regrowRegion(cells, region1, icell+i, jcell+j, newRegion,newAngle);
                         }
                     }
                 }

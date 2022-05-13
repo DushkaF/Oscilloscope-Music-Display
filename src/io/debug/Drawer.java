@@ -109,10 +109,6 @@ public class Drawer {
         return image;
     }
     private static Image getImageFromRegions(Picture picture){
-        System.out.println(picture.vecImage.edgedPixels.length+" "+picture.vecImage.edgedPixels[0].length);
-        System.out.println(picture.rawImage.getHeight()+" "+picture.rawImage.getWidth());
-        System.out.println(picture.edgeImage.height+" "+picture.edgeImage.width);
-        System.out.println(picture.vecImage.levelLinedpixels.length+" "+picture.vecImage.levelLinedpixels[0].length);
         Image image = new Image();
         image.create(picture.vecImage.width, picture.vecImage.height);
         Region region;
@@ -120,10 +116,10 @@ public class Drawer {
         for (int i = 0; i < picture.vecImage.regions.size(); i++) {
                 region=picture.vecImage.regions.get(i);
                 Color color=new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
-                System.out.println(region);
+               // System.out.println(region);
                 for (int j = 0; j < region.size(); j++) {
-                    System.out.println(j);
-                    System.out.println(region.getPoint(j));
+                //    System.out.println(j);
+                //    System.out.println(region.getPoint(j));
                 image.setPixel(region.getPoint(j).x, region.getPoint(j).y, color);
             }
         }
