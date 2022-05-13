@@ -148,14 +148,35 @@ public class VecMain {
                         Region region =cells[i][j].get(k);
                         if(!region.used){
                             region.used=true;
-                            LinkedList<Region> newReg=new LinkedList<>();
-                            newReg.add(region);
-                            regrowRegion(cells, region, i, j, newReg, region.regionAngle);
-                            while (newReg.size()!=1){
-                                Region region1=newReg.poll();
-                                newReg.getLast().addRegion(region1);
+                            LinkedList<Region> newRegList=new LinkedList<>();
+                            newRegList.add(region);
+                            regrowRegion(cells, region, i, j, newRegList, region.regionAngle);
+                            //length of new Region
+                            /*int len=0;
+                            for (int l = 0; l < newRegList.size(); l++) {
+                                len+=newRegList.get(l).size();
+                            }
+                            System.out.print(len+" ");
+                            //num of Regions
+                            int len1=0;
+                            for (int l = 0; l < h; l++) {
+                                for (int m = 0; m < w; m++) {
+                                    len1+=cells[i][j].size();
+                                }
+                            }
+                            System.out.print(len1+" "+newRegList.size()+" ");*/
+                            while (newRegList.size()!=1){
+                                Region region1=newRegList.poll();
+                                newRegList.getLast().addRegion(region1);
                                 cells[region1.icellCoord][region1.jcellCoord].remove(region1);
                             }
+                            /*len1=0;
+                            for (int l = 0; l < h; l++) {
+                                for (int m = 0; m < w; m++) {
+                                    len1+=cells[i][j].size();
+                                }
+                            }
+                            System.out.println(len1+" "+newRegList.peek().size());*/
                         }
                     }
                 }
@@ -176,7 +197,8 @@ public class VecMain {
                 if(!(icell+i<0||icell+i>=cells.length||jcell+j<0||jcell+j>=cells[0].length)){
                     for (int k = 0; k < cells[icell+i][jcell+j].size(); k++) {
                         Region region1=cells[icell+i][jcell+j].get(k);
-                        if(!region1.used&&abs(region1.regionAngle-newAngle)<=tau){
+                        double distance = pow((region1.getCenter().x-region.getCenter().x),2)+pow((region1.getCenter().x-region.getCenter().x),2);
+                        if(!region1.used&&abs(region1.regionAngle-newAngle)<=tau&&distance<=100){
                             newAngle=(newAngle*newRegion.size()+region1.regionAngle)/(newRegion.size()+1);
                             newRegion.add(region1);
                             region1.used=true;
