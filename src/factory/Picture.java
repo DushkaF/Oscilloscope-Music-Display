@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 public class Picture {
     public BufferedImage rawImage;
     public EdgePicture edgeImage;
-    public VectorPicture figures;
+    public VectorPicture vecImage;
     public byte fps;
     public boolean isNew;
     public boolean debugRendered;

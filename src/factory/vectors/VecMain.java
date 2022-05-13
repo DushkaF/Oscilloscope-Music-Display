@@ -1,6 +1,8 @@
 package factory.vectors;
 
+import factory.Picture;
 import factory.edges.EdgePicture;
+import io.args.EditArgs;
 
 import java.util.LinkedList;
 
@@ -10,57 +12,30 @@ public class VecMain {
     private static int[][] gradientKernelX;
     private static int[][] gradientKernelY;
 
-    public VectorPicture getFigures(EdgePicture edges) {
-
+    public VectorPicture getFigures(Picture picture, EditArgs editArgs) {
+        EdgePicture edges=picture.edgeImage;
         VectorPicture vecPic=new VectorPicture(edges.height, edges.width, edges.edgedPixels);
         vecPic.levelLinedpixels=getLevelLines(vecPic);
         vecPic.regions=new LinkedList<>();
-        vecPic.regions=getRegions(vecPic);
-       /* for (int i = 0; i < vecPic.height; i++) {
+        vecPic.regions=getRegions(vecPic, editArgs.tau);
+
+        /*for (int i = 0; i < vecPic.height; i++) {
             for (int j = 0; j < vecPic.width; j++) {
-                System.out.print(vecPic.levelLinedpixels[i][j]+"\t");
+                System.out.print(vecPic.levelLinedpixels[i][j].angle+"\t");
             }
             System.out.println();
+        }
+        Region region;
+        for (int i = 0; i < vecPic.regions.size(); i++) {
+           region= vecPic.regions.get(i);
+            for (int j = 0; i < region.size(); j++) {
+                System.out.println(region.getPoint(j));
+            }
+            System.out.println("new region");
         }*/
-
+        picture.vecImage=vecPic;
         return vecPic;
     }
-
-    private LinkedList<Region> getRegions(VectorPicture vecPic) {
-        LinkedList<Region> regions=new LinkedList<>();
-        LinkedList<Point> bins[]= new LinkedList[11];
-        for (int i = 0; i < vecPic.height; i++) {
-            for (int j = 0; j < vecPic.width; j++) {
-            if(bins[(int) (vecPic.levelLinedpixels[i][j].magnitude/25)]==null) bins[(int) (vecPic.levelLinedpixels[i][j].magnitude/25)]=new LinkedList<>();
-                bins[(int) (vecPic.levelLinedpixels[i][j].magnitude/25)].add(vecPic.levelLinedpixels[i][j]);
-            }
-        }
-        Point size = new Point(vecPic.height, vecPic.width, 0, 0);
-        for (int i = 0; i <11; i++) {
-            if(bins[i]!=null){
-                while (bins[i].size()!=0) {
-                   // System.out.println(bins[i].peek());
-                    Region region=new Region();
-                    growRegion(bins[i].poll(), region,size);
-                    if(region.size()>=vecPic.height* vecPic.width/10000)regions.add(region);
-                }
-            }
-        }
-
-        return regions;
-    }
-
-    private void growRegion(Point point, Region region, Point size) {
-        if(point.used)return;
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                if (!(point.x+i<0||point.x+j>=size.x||point.y+j<0||point.y+j>=size.y)){
-
-                }
-            }
-        }
-    }
-
 
     private Point[][] getLevelLines(VectorPicture vectorPicture){
         if(gradientKernelX ==null) {
@@ -87,7 +62,7 @@ public class VecMain {
                         }
                     }
                 }
-                points[i][j]=new Point(i,j,round(toDegrees(atan(1.0*Gy/Gx)+(Gx>=0?0:PI))*10)/10,(short) sqrt(Gx*Gx+Gy*Gy));
+                points[i][j]=new Point(i,j,atan(1.0*Gy/Gx),(short) sqrt(Gx*Gx+Gy*Gy));
                 if(points[i][j].magnitude>max)max= (short) points[i][j].magnitude;
                 if(points[i][j].magnitude<min)min= (short)points[i][j].magnitude;
             }
@@ -105,5 +80,51 @@ public class VecMain {
         return points;
     }
 
+    private LinkedList<Region> getRegions(VectorPicture vecPic, double tau) {
+        LinkedList<Region> regions=new LinkedList<>();
+        LinkedList<Point> bins[]= new LinkedList[11];
+        for (int i = 0; i < vecPic.height; i++) {
+            for (int j = 0; j < vecPic.width; j++) {
+                if(bins[(int) (vecPic.levelLinedpixels[i][j].magnitude/25)]==null) bins[(int) (vecPic.levelLinedpixels[i][j].magnitude/25)]=new LinkedList<>();
+                bins[(int) (vecPic.levelLinedpixels[i][j].magnitude/25)].add(vecPic.levelLinedpixels[i][j]);
+            }
+        }
+        for (int i = 0; i <11; i++) {
+            if(bins[i]!=null){
+                while (bins[i].size()!=0) {
+                    // System.out.println(bins[i].peek());
+                    Region region=new Region();
+                    region.regionAngle=bins[i].peek().angle;
+                    double Sx=cos(region.regionAngle);
+                    double Sy=sin(region.regionAngle);
+                    growRegion(bins[i].poll(), region, vecPic, Sx, Sy, tau);
+                    if(region.size()>=vecPic.height* vecPic.width/10000)regions.add(region);
+                }
+            }
+        }
 
+        return regions;
+    }
+
+    private void growRegion(Point point, Region region, VectorPicture vecPic, double sx, double sy, double tau) {
+    //    System.out.println(point);
+    //    System.out.println(region.regionAngle);
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                if (!(point.x+j<0||point.x+j>= vecPic.width||point.y+i<0||point.y+i>=vecPic.height)){
+                    if(!vecPic.levelLinedpixels[point.y+i][point.x+j].used){
+                        if(abs(region.regionAngle-vecPic.levelLinedpixels[point.y+i][point.x+j].angle)<tau){
+                            region.addPoint(vecPic.levelLinedpixels[point.y+i][point.x+j]);
+                        //    System.out.println("added point");
+                            vecPic.levelLinedpixels[point.y+i][point.x+j].used=true;
+                            sx+=cos(vecPic.levelLinedpixels[point.y+i][point.x+j].angle);
+                            sy=sin(vecPic.levelLinedpixels[point.y+i][point.x+j].angle);
+                            region.regionAngle=atan(sy/sx);
+                            growRegion(vecPic.levelLinedpixels[point.y+i][point.x+j], region, vecPic, sx,sy,tau);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

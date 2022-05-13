@@ -12,7 +12,7 @@ public class DebugArgs {
         pictureList[0]=DebugPictureType.RAW;
         pictureList[1]=DebugPictureType.GREY;
         pictureList[2]=DebugPictureType.EDGED;
-        pictureList[3]=DebugPictureType.FIGURES;
+        pictureList[3]=DebugPictureType.REGIONS;
     }
     public byte command(String message){
         if(message.length()<4){

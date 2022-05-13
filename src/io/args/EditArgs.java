@@ -1,6 +1,6 @@
 package io.args;
 
-import java.util.Objects;
+import static java.lang.Math.toRadians;
 
 public class EditArgs {
 
@@ -9,6 +9,7 @@ public class EditArgs {
     public double highThresholdRatio;
     public double lowThresholdRatio;
     public byte numOfHyst;
+    public double tau;
 
     public EditArgs(){
         k=2;
@@ -16,6 +17,7 @@ public class EditArgs {
         highThresholdRatio=0.7;
         lowThresholdRatio=0.3;
         numOfHyst=1;
+        tau=toRadians(11.25);
     }
 
     public byte command(String message) {
@@ -75,6 +77,16 @@ public class EditArgs {
                         return -1;
                     }
                     break;
+                case "tau":
+                    double t = -1;
+                    try {
+                        num = Byte.parseByte(ms[1]);
+                        if (num < 0 || num > 45) return -1;
+                        tau = t;
+                    } catch (NumberFormatException e) {
+                        return -1;
+                    }
+                    break;
             }
         }
         return 0;
@@ -85,7 +97,7 @@ public class EditArgs {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EditArgs editArgs = (EditArgs) o;
-        return k == editArgs.k && Double.compare(editArgs.sigma, sigma) == 0 && Double.compare(editArgs.highThresholdRatio, highThresholdRatio) == 0 && Double.compare(editArgs.lowThresholdRatio, lowThresholdRatio) == 0 && numOfHyst == editArgs.numOfHyst;
+        return k == editArgs.k && Double.compare(editArgs.sigma, sigma) == 0 && Double.compare(editArgs.highThresholdRatio, highThresholdRatio) == 0 && Double.compare(editArgs.lowThresholdRatio, lowThresholdRatio) == 0 && numOfHyst == editArgs.numOfHyst && Double.compare(editArgs.tau, tau) == 0;
     }
 
     @Override
@@ -96,6 +108,7 @@ public class EditArgs {
                 ", highThresholdRatio=" + highThresholdRatio +
                 ", lowThresholdRatio=" + lowThresholdRatio +
                 ", numOfHyst=" + numOfHyst +
+                ", tau=" + tau +
                 '}';
     }
 }

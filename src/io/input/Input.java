@@ -56,12 +56,12 @@ public class Input {
                         if(!file.getPath().equals(lastPath)) {
                             try {
                                 ObjectInputStream objectInputStream=new ObjectInputStream(new FileInputStream(file));
-                                picture.figures =(VectorPicture) objectInputStream.readObject();
+                                picture.vecImage =(VectorPicture) objectInputStream.readObject();
                                 lastPath= file.getPath();
                                 System.out.println("loaded vectorized image from file: "+file.getPath());
                                 picture.isNew=true;
                             } catch (IOException | ClassNotFoundException e) {
-                                picture.figures=null;
+                                picture.vecImage =null;
                                 System.out.println("Couldn't load vectorized image from file:"+file.getPath());
                             }
                         }

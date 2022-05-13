@@ -1,6 +1,7 @@
 package io.debug;
 
 import factory.Picture;
+import factory.vectors.Region;
 import io.args.DebugArgs;
 import io.args.arg_type.DebugPictureType;
 import org.jsfml.graphics.*;
@@ -12,6 +13,7 @@ import org.jsfml.system.Vector2i;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Random;
 
 
 public class Drawer {
@@ -28,7 +30,7 @@ public class Drawer {
 
     private static Font font;
     private static Text text;
-
+    private static Random random;
     public static void draw(Picture picture, RenderWindow window, DebugArgs dA, Vector2i size) throws TextureCreationException, IOException {
         firstPos=new Vector2f(0,0);
         secPos=new Vector2f(size.x/2, 0);
@@ -43,8 +45,8 @@ public class Drawer {
                     case RAW:
                         texture.loadFromImage(getImageFromRaw(picture));
                         break;
-                    case FIGURES:
-                        texture.loadFromImage(getImageFromFigures(picture));
+                    case REGIONS:
+                        texture.loadFromImage(getImageFromRegions(picture));
                         break;
                     default:
                         texture.loadFromImage(getImageFromEdges(picture, dA.pictureList[i]));
@@ -106,9 +108,25 @@ public class Drawer {
         image.create(picture.rawImage);
         return image;
     }
-    private static Image getImageFromFigures(Picture picture){
+    private static Image getImageFromRegions(Picture picture){
+        System.out.println(picture.vecImage.edgedPixels.length+" "+picture.vecImage.edgedPixels[0].length);
+        System.out.println(picture.rawImage.getHeight()+" "+picture.rawImage.getWidth());
+        System.out.println(picture.edgeImage.height+" "+picture.edgeImage.width);
+        System.out.println(picture.vecImage.levelLinedpixels.length+" "+picture.vecImage.levelLinedpixels[0].length);
         Image image = new Image();
-        image.create(picture.rawImage);
+        image.create(picture.vecImage.width, picture.vecImage.height);
+        Region region;
+        random=random==null?new Random():random;
+        for (int i = 0; i < picture.vecImage.regions.size(); i++) {
+                region=picture.vecImage.regions.get(i);
+                Color color=new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
+                System.out.println(region);
+                for (int j = 0; j < region.size(); j++) {
+                    System.out.println(j);
+                    System.out.println(region.getPoint(j));
+                image.setPixel(region.getPoint(j).x, region.getPoint(j).y, color);
+            }
+        }
         return image;
     }
     private static Image getImageFromEdges(Picture picture, DebugPictureType debugPictureType){

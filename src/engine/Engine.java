@@ -87,9 +87,9 @@ public class Engine implements Runnable {
                 unrenderedTime=0;
                 input.getPicture(picture);
                 if(picture.isNew){
-                edgePicture=edgMain.getEdges(picture, args.editArgs);
-                vectorPicture=vecMain.getFigures(edgePicture);
-                map=mapMain.getMap(vectorPicture);
+                edgMain.getEdges(picture, args.editArgs);
+                vecMain.getFigures(picture, args.editArgs);
+                map=mapMain.getMap(picture.vecImage);
                 output.draw(map);
                 picture.debugRendered=false;
                 }
