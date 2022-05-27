@@ -5,11 +5,9 @@ import io.args.EditArgs;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import static java.lang.Math.exp;
-import static java.lang.Math.pow;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.PI;
-import static java.lang.Math.atan;
+
+import static java.lang.Math.*;
+
 public class EdgMain {
     private static final byte HORIZONTAL =0;
     private static final byte SEC_DIAG =1;
@@ -111,7 +109,7 @@ public class EdgMain {
                         }
                     }
                 }
-                angle=atan(1.0*Gy/Gx)+(Gx>=0?0:PI);
+                angle=atan(1.0*Gy/Gx);
                 // System.out.print(Math.toDegrees(angle)+"\t");
                 if(angle<-3*PI/8)edges.directions[i][j]=HORIZONTAL;
                 if(angle>-3*PI/8&&angle<-PI/8)edges.directions[i][j]=SEC_DIAG;
@@ -122,13 +120,15 @@ public class EdgMain {
                 if(angle>7*PI/8&&angle<9*PI/8)edges.directions[i][j]=VERTICAL;
                 if(angle>9*PI/8&&angle<11*PI/8)edges.directions[i][j]=DIAG;
                 if(angle>11*PI/8)edges.directions[i][j]=HORIZONTAL;
-                edges.intensePixels[i][j]= (short) sqrt(Gx*Gx+Gy*Gy);
+                edges.intensePixels[i][j][0]= (short) sqrt(Gx*Gx+Gy*Gy);
+                edges.intensePixels[i][j][1]=angle;
+             //   System.out.print(toDegrees(angle)+"\t");
             }
-          //  System.out.println();
+            //System.out.println();
         }
        /* for (int i = 0; i < edges.height; i++) {
             for (int j = 0; j < edges.width; j++) {
-                System.out.print(edges.angles[i][j]+"\t");
+                System.out.print(edges.intensePixels[i][j][0]+"\t");
             }
             System.out.println();
         }*/
@@ -138,28 +138,28 @@ public class EdgMain {
     private void supress(EdgePicture edges){
         for (int i = 0; i < edges.height; i++) {
             for (int j = 0; j < edges.width; j++) {
-                short p;
-                short r;
+                double p;
+                double r;
                 switch (edges.directions[i][j]){
                     case VERTICAL:
-                        p=((i+1)<edges.height)? edges.intensePixels[i+1][j]:0;
-                        r=((i-1)>=0)? edges.intensePixels[i-1][j]:0;
-                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j]>p&&edges.intensePixels[i][j]>r)?edges.intensePixels[i][j]:0);
+                        p=((i+1)<edges.height)? edges.intensePixels[i+1][j][0]:0;
+                        r=((i-1)>=0)? edges.intensePixels[i-1][j][0]:0;
+                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j][0]>p&&edges.intensePixels[i][j][0]>r)?edges.intensePixels[i][j][0]:0);
                         break;
                     case HORIZONTAL:
-                        p=((j+1)<edges.width)? edges.intensePixels[i][j+1]:0;
-                        r=((j-1)>=0)? edges.intensePixels[i][j-1]:0;
-                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j]>p&&edges.intensePixels[i][j]>r)?edges.intensePixels[i][j]:0);
+                        p=((j+1)<edges.width)? edges.intensePixels[i][j+1][0]:0;
+                        r=((j-1)>=0)? edges.intensePixels[i][j-1][0]:0;
+                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j][0]>p&&edges.intensePixels[i][j][0]>r)?edges.intensePixels[i][j][0]:0);
                         break;
                     case DIAG:
-                        p=((i+1)<edges.height&&(j+1)<edges.width)? edges.intensePixels[i+1][j+1]:0;
-                        r=((i-1)>=0&&(j-1)>=0)? edges.intensePixels[i-1][j-1]:0;
-                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j]>p&&edges.intensePixels[i][j]>r)?edges.intensePixels[i][j]:0);
+                        p=((i+1)<edges.height&&(j+1)<edges.width)? edges.intensePixels[i+1][j+1][0]:0;
+                        r=((i-1)>=0&&(j-1)>=0)? edges.intensePixels[i-1][j-1][0]:0;
+                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j][0]>p&&edges.intensePixels[i][j][0]>r)?edges.intensePixels[i][j][0]:0);
                         break;
                     case SEC_DIAG:
-                        p=((i+1)<edges.height&&(j-1)>=0)? edges.intensePixels[i+1][j-1]:0;
-                        r=((i-1)>=0&&(j+1)<edges.width)? edges.intensePixels[i-1][j+1]:0;
-                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j]>p&&edges.intensePixels[i][j]>r)?edges.intensePixels[i][j]:0);
+                        p=((i+1)<edges.height&&(j-1)>=0)? edges.intensePixels[i+1][j-1][0]:0;
+                        r=((i-1)>=0&&(j+1)<edges.width)? edges.intensePixels[i-1][j+1][0]:0;
+                        edges.suppressedPixels[i][j]= (short) ((edges.intensePixels[i][j][0]>p&&edges.intensePixels[i][j][0]>r)?edges.intensePixels[i][j][0]:0);
                         break;
                 }
                 maxIntentse=edges.suppressedPixels[i][j]>maxIntentse?edges.suppressedPixels[i][j]:maxIntentse;

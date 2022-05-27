@@ -137,7 +137,12 @@ public class Drawer {
                 matrix = picture.edgeImage.blurredPixels;
                 break;
             case INTENSE:
-                matrix = picture.edgeImage.intensePixels;
+                matrix = new short[picture.edgeImage.height][picture.edgeImage.width];
+                for (int i = 0; i < matrix.length; i++) {
+                    for (int j = 0; j < matrix[0].length; j++) {
+                     matrix[i][j]= (short) picture.edgeImage.intensePixels[i][j][0];
+                    }
+                }
                 break;
             case SUPPRESSED:
                 matrix=picture.edgeImage.suppressedPixels;

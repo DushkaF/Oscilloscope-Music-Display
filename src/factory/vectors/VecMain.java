@@ -20,57 +20,11 @@ public class VecMain {
         tau=editArgs.tau;
         numOfTries=editArgs.numOfTries;
         EdgePicture edges=picture.edgeImage;
-        VectorPicture vecPic=new VectorPicture(edges.height, edges.width, edges.edgedPixels);
-        getLevelLines(vecPic);
+        VectorPicture vecPic=new VectorPicture(edges.height, edges.width, edges.intensePixels);
         vecPic.regions=new LinkedList<>();
         getRegions(vecPic);
         picture.vecImage=vecPic;
         return vecPic;
-    }
-
-    private Point[][] getLevelLines(VectorPicture vectorPicture){
-        if(gradientKernelX ==null) {
-            gradientKernelX = new int[][] {{-1,-2,-1},{0,0,0},{1,2,1}};
-        }
-        if(gradientKernelY ==null) {
-            gradientKernelY = new int[][] {{-1,0,1},{-2,0,2},{-1,0,1}};
-        }
-        int k=1;
-        int height=vectorPicture.edgedPixels.length;
-        int width=vectorPicture.edgedPixels[0].length;
-        short max=0;
-        short min=1000;
-        Point points[][]=new Point[height][width];
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                int Gx=0;
-                int Gy=0;
-                for(int i2=-k;i2<k+1;i2++){
-                    for(int j2=-k;j2<k+1;j2++){
-                        if(i2+i>0&&i2+i<height &&j2+j>0&&j2+j<width){
-                            Gx+=(vectorPicture.edgedPixels[i+i2][j+j2]?255:0)*gradientKernelX[i2+k][j2+k];
-                            Gy+=(vectorPicture.edgedPixels[i+i2][j+j2]?255:0)*gradientKernelY[i2+k][j2+k];
-                        }
-                    }
-                }
-                points[i][j]=new Point(j,i,atan(1.0*Gy/Gx),(short) sqrt(Gx*Gx+Gy*Gy));
-                if(points[i][j].magnitude>max)max= (short) points[i][j].magnitude;
-                if(points[i][j].magnitude<min)min= (short)points[i][j].magnitude;
-            }
-        }
-
-        double scale=255.0/max;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                points[i][j].magnitude*=scale;
-                points[i][j].magnitude=round(points[i][j].magnitude);
-            }
-        }
-        vectorPicture.maxMagnitude=max;
-        vectorPicture.minMagnitude=min;
-        vectorPicture.levelLinedpixels=points;
-
-        return points;
     }
 
     private LinkedList<Region> getRegions(VectorPicture vecPic) {
@@ -97,7 +51,6 @@ public class VecMain {
         }
         regroupRegions(vecPic,regions);
         vecPic.regions=regions;
-
         return regions;
     }
 

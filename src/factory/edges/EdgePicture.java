@@ -3,7 +3,7 @@ package factory.edges;
 public class EdgePicture {
     public short[][] greyPixels;
     public short[][] blurredPixels;
-    public short[][] intensePixels;
+    public double[][][] intensePixels; // i coord j coord magnitude at [i][j][0] and angle at [i][j][1]
     public short[][] directions;
     public short[][] suppressedPixels;
     public short[][] thresholdPixels;
@@ -14,7 +14,7 @@ public class EdgePicture {
 
     public EdgePicture(int x, int y){
         blurredPixels= new short[x][y];
-        intensePixels = new short[x][y];
+        intensePixels = new double[x][y][2];
         edgedPixels= new boolean[x][y];
         greyPixels= new short[x][y];
         directions = new short[x][y];
