@@ -1,6 +1,7 @@
 package io.debug;
 
 import factory.Picture;
+import factory.map.Cluster;
 import factory.vectors.Region;
 import factory.vectors.Vector;
 import io.args.DebugArgs;
@@ -14,6 +15,7 @@ import org.jsfml.system.Vector2i;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.Random;
 
 import static java.lang.Math.abs;
@@ -54,6 +56,9 @@ public class Drawer {
                         break;
                     case VECTORS:
                         texture.loadFromImage(getImageFromVectors(picture));
+                        break;
+                    case CLUSTERS:
+                        texture.loadFromImage(getImageFromClusters(picture));
                         break;
                     case ORDERED:
                         texture.loadFromImage(getImageFromOrdered(picture));
@@ -114,7 +119,27 @@ public class Drawer {
 
     }
 
+    private static Image getImageFromClusters(Picture picture) {
+        Image image=new Image();
+        image.create(picture.vecImage.width, picture.vecImage.height);
+        LinkedList<Cluster> clusters=picture.vecImage.clusters;
+        random=random==null?new Random():random;
+        Vector vector;
+        for (int  k= 0; k <clusters.size(); k++) {
+            //  System.out.println(picture.vecImage.regions.get(k));
+            // System.out.println(vector);
+            Color color=new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
+            for (int i = 0; i < clusters.get(k).size(); i++) {
+                vector=clusters.get(k).get(i);
+                if(vector.visible)drawVec(vector,color,image);
+            }
+
+        }
+        return image;
+    }
+
     private static Image getImageFromOrdered(Picture picture) {
+
         return getImageFromVectors(picture);
     }
 
@@ -129,155 +154,159 @@ public class Drawer {
           //  System.out.println(picture.vecImage.regions.get(k));
            // System.out.println(vector);
             Color color=new Color(random.nextInt(255),random.nextInt(255),random.nextInt(255));
-            int diffY=-(vector.start.y-vector.end.y);
-            int diffX=-(vector.start.x-vector.end.x);
-            double error=0.0;
-            double step=abs(1.0*diffY/diffX);
-           // System.out.println(diffX+" "+diffY);
-            //System.out.println();
-            if(diffX==0||diffY==0){
-                if (diffX==0){
-                    //vertical
-                   if (diffY>0){
+            if(vector.visible)drawVec(vector,color,image);
+        }
+        return image;
+    }
+    private static void drawVec(Vector vector, Color color, Image image){
+        int diffY=-(vector.start.y-vector.end.y);
+        int diffX=-(vector.start.x-vector.end.x);
+        double error=0.0;
+        double step=abs(1.0*diffY/diffX);
+        // System.out.println(diffX+" "+diffY);
+        //System.out.println();
+        if(diffX==0||diffY==0){
+            if (diffX==0){
+                //vertical
+                if (diffY>0){
                     //down
-                       for (int i = vector.start.y ; i < vector.end.y; i++) {
-                           image.setPixel(vector.start.x,i,color);
-                       }
-                   }else{
-                       //up
-                       for (int i = vector.start.y ; i > vector.end.y; i--) {
-                           image.setPixel(vector.start.x,i,color);
-                       }
-                   }
-                }else{
-                    //horizontal
-                    if(diffX>0){
-                        for (int i = vector.start.x ; i < vector.end.x; i++) {
-                            image.setPixel(i,vector.start.y,color);
-                        }
-                        //right
-                    }else{
-                        //left
-                        for (int i = vector.start.x ; i > vector.end.x; i--) {
-                            image.setPixel(i,vector.start.y,color);
-                        }
-                    }
-                }
-           } else{if(diffX>0){
-                //right
-                if(diffY>0){
-                    //down
-                    if(diffY<diffX){
-                        //from -45 to 0
-                        int y=vector.start.y;
-                        for (int i = vector.start.x; i < vector.end.x; i++) {
-                            image.setPixel(i,y,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                y++;
-                            }
-                        }
-                    }else{
-                        //from -90 to -45
-                        int x=vector.start.x;
-                        step=1/step;
-                        for (int i = vector.start.y; i < vector.end.y; i++) {
-                            image.setPixel(x,i,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                x++;
-                            }
-                        }
+                    for (int i = vector.start.y ; i < vector.end.y; i++) {
+                        image.setPixel(vector.start.x,i,color);
                     }
                 }else{
                     //up
-                    if(abs(diffY)<diffX){
-                        //from 0 to 45
-                        int y=vector.start.y;
-                        for (int i = vector.start.x; i < vector.end.x; i++) {
-                            image.setPixel(i,y,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                y--;
-                            }
+                    for (int i = vector.start.y ; i > vector.end.y; i--) {
+                        image.setPixel(vector.start.x,i,color);
+                    }
+                }
+            }else{
+                //horizontal
+                if(diffX>0){
+                    for (int i = vector.start.x ; i < vector.end.x; i++) {
+                        image.setPixel(i,vector.start.y,color);
+                    }
+                    //right
+                }else{
+                    //left
+                    for (int i = vector.start.x ; i > vector.end.x; i--) {
+                        image.setPixel(i,vector.start.y,color);
+                    }
+                }
+            }
+        } else{if(diffX>0){
+            //right
+            if(diffY>0){
+                //down
+                if(diffY<diffX){
+                    //from -45 to 0
+                    int y=vector.start.y;
+                    for (int i = vector.start.x; i < vector.end.x; i++) {
+                        image.setPixel(i,y,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            y++;
                         }
-                    }else{
-                        //from 45 to 90
-                        int x=vector.start.x;
-                        step=1/step;
-                        for (int i = vector.start.y; i > vector.end.y; i--) {
-                            image.setPixel(x,i,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                x++;
-                            }
+                    }
+                }else{
+                    //from -90 to -45
+                    int x=vector.start.x;
+                    step=1/step;
+                    for (int i = vector.start.y; i < vector.end.y; i++) {
+                        image.setPixel(x,i,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            x++;
                         }
                     }
                 }
             }else{
-                //left
-                if(diffY>0){
-                    //down
-                    if(abs(diffX)>diffY){
-                        //from -135 to -180
-                        int y=vector.start.y;
-                        for (int i = vector.start.x; i >vector.end.x; i--) {
-                            image.setPixel(i,y,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                y++;
-                            }
-                        }
-                    }else{
-                        //from -90 to -135
-                        int x=vector.start.x;
-                        step=1/step;
-                        for (int i = vector.start.y; i < vector.end.y; i++) {
-                            image.setPixel(x,i,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                x--;
-                            }
+                //up
+                if(abs(diffY)<diffX){
+                    //from 0 to 45
+                    int y=vector.start.y;
+                    for (int i = vector.start.x; i < vector.end.x; i++) {
+                        image.setPixel(i,y,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            y--;
                         }
                     }
                 }else{
-                    //up
-                    if(abs(diffX)>abs(diffY)){
-                        //from 135 to 180
-                        int y=vector.start.y;
-                        for (int i = vector.start.x; i >vector.end.x; i--) {
-                            image.setPixel(i,y,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                y--;
-                            }
-                        }
-                    }else{
-                        //from 90 to 135
-                        int x=vector.start.x;
-                        step=1/step;
-                        for (int i = vector.start.y; i > vector.end.y; i--) {
-                            image.setPixel(x,i,color);
-                            error+=step;
-                            if(error>=1.0){
-                                error--;
-                                x--;
-                            }
+                    //from 45 to 90
+                    int x=vector.start.x;
+                    step=1/step;
+                    for (int i = vector.start.y; i > vector.end.y; i--) {
+                        image.setPixel(x,i,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            x++;
                         }
                     }
                 }
-            }}
+            }
+        }else{
+            //left
+            if(diffY>0){
+                //down
+                if(abs(diffX)>diffY){
+                    //from -135 to -180
+                    int y=vector.start.y;
+                    for (int i = vector.start.x; i >vector.end.x; i--) {
+                        image.setPixel(i,y,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            y++;
+                        }
+                    }
+                }else{
+                    //from -90 to -135
+                    int x=vector.start.x;
+                    step=1/step;
+                    for (int i = vector.start.y; i < vector.end.y; i++) {
+                        image.setPixel(x,i,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            x--;
+                        }
+                    }
+                }
+            }else{
+                //up
+                if(abs(diffX)>abs(diffY)){
+                    //from 135 to 180
+                    int y=vector.start.y;
+                    for (int i = vector.start.x; i >vector.end.x; i--) {
+                        image.setPixel(i,y,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            y--;
+                        }
+                    }
+                }else{
+                    //from 90 to 135
+                    int x=vector.start.x;
+                    step=1/step;
+                    for (int i = vector.start.y; i > vector.end.y; i--) {
+                        image.setPixel(x,i,color);
+                        error+=step;
+                        if(error>=1.0){
+                            error--;
+                            x--;
+                        }
+                    }
+                }
+            }
+            }
         }
-        return image;
-    }
 
+    }
     public static Image getImageFromRaw(Picture picture){
         Image image = new Image();
         image.create(picture.rawImage);

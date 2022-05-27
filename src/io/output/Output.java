@@ -1,7 +1,10 @@
 package io.output;
 
+import factory.vectors.Vector;
 import io.args.OutputArgs;
-import factory.map.Map;
+
+
+import java.util.LinkedList;
 
 public class Output implements Runnable{
     private OutputArgs outputArgs;
@@ -10,7 +13,7 @@ public class Output implements Runnable{
         this.outputArgs=outputArgs;
     }
 
-    public void draw(Map map) {
+    public void draw(LinkedList<Vector> map) {
     }
 
     public OutputArgs getArgs() {

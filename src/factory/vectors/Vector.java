@@ -1,5 +1,7 @@
 package factory.vectors;
 
+import java.util.Objects;
+
 import static java.lang.Math.*;
 
 public class Vector {
@@ -11,7 +13,9 @@ public class Vector {
     public double width;
     public Point start;
     public Point end;
-    public Vector(int picHeight, int picWidth, int Cx,int Cy, double angle,double minL, double maxL,double width){
+    public boolean visible;
+    public boolean used=false;
+    public Vector(int picHeight, int picWidth, int Cx,int Cy, double angle,double minL, double maxL,double width,boolean visible){
         //vector=new Vector2f(Cx+minL*sin(angle), )
         // Vector
        // System.out.println(picHeight+" "+picWidth+" "+Cx+" "+Cy+" "+angle+" "+minL+" "+maxL+" "+width);
@@ -31,6 +35,7 @@ public class Vector {
         this.minL=minL;
         this.maxL=maxL;
         this.width=round(width);
+        this.visible=visible;
      //   System.out.println(this);
     }
 
@@ -46,5 +51,18 @@ public class Vector {
                 ", start={" + start.x+";"+start.y+"}" +
                 ", end={" + end.x+";"+end.y+"}" +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vector vector = (Vector) o;
+        return Cx == vector.Cx && Cy == vector.Cy && Double.compare(vector.angle, angle) == 0 && Double.compare(vector.minL, minL) == 0 && Double.compare(vector.maxL, maxL) == 0 && Double.compare(vector.width, width) == 0 && Objects.equals(start, vector.start) && Objects.equals(end, vector.end);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(Cx, Cy, angle, minL, maxL, width, start, end);
     }
 }

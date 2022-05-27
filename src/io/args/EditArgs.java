@@ -12,6 +12,7 @@ public class EditArgs {
     public double tau;
     public int regMinSize;
     public short numOfTries;
+    public int radius;
 
     public EditArgs(){
         k=2;
@@ -22,6 +23,7 @@ public class EditArgs {
         tau=toRadians(11.25);
         regMinSize=100;
         numOfTries=0;
+        radius=5;
     }
 
     public byte command(String message) {
@@ -107,6 +109,16 @@ public class EditArgs {
                         not = Short.parseShort(ms[1]);
                         if (not < 0 || not > 1000) return -1;
                         numOfTries = not;
+                    } catch (NumberFormatException e) {
+                        return -1;
+                    }
+                    break;
+                case "radius":
+                    int r = -1;
+                    try {
+                        r = Integer.parseInt(ms[1]);
+                        if (r <= 0 || r > 1000) return -1;
+                        radius = r;
                     } catch (NumberFormatException e) {
                         return -1;
                     }

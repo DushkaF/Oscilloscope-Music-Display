@@ -1,6 +1,7 @@
 package factory;
 
 import factory.edges.EdgePicture;
+import factory.map.Cluster;
 import factory.vectors.VectorPicture;
 
 import java.awt.image.BufferedImage;
@@ -12,4 +13,5 @@ public class Picture {
     public byte fps;
     public boolean isNew;
     public boolean debugRendered;
+
 }

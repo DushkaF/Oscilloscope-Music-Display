@@ -97,8 +97,7 @@ public class Region {
         }
         return detection;
     }
-    double bcd(int n,int k)
-    {
+    double bcd(int n,int k) {
         if (k>n/2) k=n-k; // возьмем минимальное из k, n-k.. В силу симметричности C(n,k)=C(n,n-k)
         if (k==1)  return n;
         if (k==0)  return 1;
@@ -142,8 +141,9 @@ public class Region {
         minL=round(minL);
         maxL=round(maxL);
         //System.out.println("center " +Cx+" "+Cy+" angle "+toDegrees(rectangleAngle)+" legnth "+maxL+" "+-minL+" width "+average_R);
-        vector=new Vector(height, width,Cx,Cy,rectangleAngle,minL,maxL,average_R);
-       // System.out.println(vector);
+        vector=new Vector(height, width,Cx,Cy,regionAngle,minL,maxL,average_R, true);
+        //vector=new Vector(height, width,Cx,Cy,rectangleAngle,minL,maxL,average_R, true);
+        //System.out.println(vector);
     }
 
     @Override

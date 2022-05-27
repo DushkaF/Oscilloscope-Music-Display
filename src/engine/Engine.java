@@ -2,7 +2,7 @@ package engine;
 
 import factory.Picture;
 import factory.edges.EdgePicture;
-import factory.map.Map;
+import factory.vectors.Vector;
 import factory.vectors.VectorPicture;
 import io.args.Args;
 import io.debug.DebugWindow;
@@ -11,6 +11,8 @@ import io.output.Output;
 import factory.edges.EdgMain;
 import factory.map.MapMain;
 import factory.vectors.VecMain;
+
+import java.util.LinkedList;
 
 public class Engine implements Runnable {
     protected boolean running;
@@ -66,7 +68,7 @@ public class Engine implements Runnable {
         double lastTime = System.nanoTime() / 1000_000_000.0; //last got time
         double elapsedTime = 0.0; // elapsed time after last program's tick
         double unrenderedTime = 0.0; // elapsed time after last render
-        Map map = null;
+        LinkedList<Vector> map = null;
         byte framesPassed=0;
         double frameTime=0;
         EdgePicture edgePicture;
@@ -89,7 +91,7 @@ public class Engine implements Runnable {
                 if(picture.isNew){
                 edgMain.getEdges(picture, args.editArgs);
                 vecMain.getFigures(picture, args.editArgs);
-                map=mapMain.getMap(picture.vecImage);
+                map=mapMain.getMap(picture.vecImage, picture.vecImage.vectors, args.editArgs);
                 output.draw(map);
                 picture.debugRendered=false;
                 }
