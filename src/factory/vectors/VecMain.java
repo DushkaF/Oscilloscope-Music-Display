@@ -24,6 +24,12 @@ public class VecMain {
         getLevelLines(vecPic);
         vecPic.regions=new LinkedList<>();
         getRegions(vecPic);
+//        for (Region r: vecPic.regions) {
+//            r.getRectangleAngle();
+//            System.out.println(r);
+//            System.out.println();
+//        }
+
         picture.vecImage=vecPic;
         return vecPic;
     }
@@ -96,8 +102,23 @@ public class VecMain {
             }
         }
         regroupRegions(vecPic,regions);
+      //  System.out.println(regions.size());
+        for (int i = 0; i < regions.size(); i++) {
+            Region r=regions.get(i);
+            r.getRectangleAngle();
+            if(!r.isDetected(vecPic.width, vecPic.height, tau)){
+                regions.remove(i);
+                i--;
+            }else{
+                r.createVector(vecPic.height, vecPic.width);
+            }
+        }
+        //System.out.println(regions.size());
         vecPic.regions=regions;
-
+        vecPic.vectors=new Vector[regions.size()];
+        for (int i = 0; i < regions.size(); i++) {
+            vecPic.vectors[i]=regions.get(i).vector;
+        }
         return regions;
     }
 

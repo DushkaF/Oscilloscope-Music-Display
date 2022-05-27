@@ -6,7 +6,7 @@ public class VectorPicture {
     public boolean[][] edgedPixels;
     public Point[][] levelLinedpixels;
     public LinkedList<Region> regions;
-
+    public Vector[] vectors;
     public short maxMagnitude;
     public short minMagnitude;
 
