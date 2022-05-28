@@ -15,6 +15,16 @@ public class Vector {
     public Point end;
     public boolean visible;
     public boolean used=false;
+    public Vector(Point s, Point e, boolean visible){
+        start=s;
+        end=e;
+        Cx=(s.x+e.x)/2;
+        Cy=(s.y+e.y)/2;
+        maxL=sqrt(pow(e.x-Cx,2)+pow(e.y-Cy,2));
+        minL=-maxL;
+        this.visible=visible;
+        angle=0.0;
+    }
     public Vector(int picHeight, int picWidth, int Cx,int Cy, double angle,double minL, double maxL,double width,boolean visible){
         //vector=new Vector2f(Cx+minL*sin(angle), )
         // Vector

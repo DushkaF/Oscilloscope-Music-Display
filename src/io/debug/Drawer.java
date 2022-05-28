@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.min;
 
 
 public class Drawer {
@@ -28,7 +27,7 @@ public class Drawer {
     private static Vector2f secPos;
     private static Vector2f thirdPos;
     private static Vector2f fourthPos;
-
+    private static Color[][] gradients;
     private static Sprite firstSprite=new Sprite();
     private static Sprite secondSprite=new Sprite();
     private static Sprite thirdSprite=new Sprite();
@@ -139,8 +138,49 @@ public class Drawer {
     }
 
     private static Image getImageFromOrdered(Picture picture) {
+        Vector[][] orderedCluster=picture.vecImage.orderedClusters;
+        Image image=new Image();
+        image.create(picture.vecImage.width, picture.vecImage.height);
+        Color unvisible=Color.WHITE;
+        if(gradients==null){
+            gradients=new Color[6][16]; // [color][intense]
+            //0 0 x
+            for (int j = 0; j < 6; j++) {
+                for (int i = 0; i < 16; i++) {
+                    switch (j){
+                        case 0:
+                            gradients[j][i]=new Color(0,0,50+10*i);
+                            break;
+                        case 1:
+                            gradients[j][i]=new Color(0,50+10*i, 0);
+                            break;
+                        case 2:
+                            gradients[j][i]=new Color(50+10*i, 0,0);
+                            break;
+                        case 3:
+                            gradients[j][i]=new Color(0,50+10*i,50+10*i);
+                            break;
+                        case 4:
+                            gradients[j][i]=new Color(50+10*i,0,50+10*i);
+                            break;
+                        case 5:
+                            gradients[j][i]=new Color(50+10*i,50+10*i,0);
+                            break;
+                    }
+                }
+            }
+        }
 
-        return getImageFromVectors(picture);
+        for (int i = 0; i < orderedCluster.length; i++) {
+            for (int j = 0; j < orderedCluster[i].length; j++) {
+                if(orderedCluster[i][j].visible) {
+                    drawVec(orderedCluster[i][j], gradients[i % 6][j % 16], image);
+                }else{
+                    drawVec(orderedCluster[i][j], unvisible, image);
+                }
+            }
+        }
+        return image;
     }
 
     private static Image getImageFromVectors(Picture picture) {
