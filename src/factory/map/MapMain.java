@@ -16,6 +16,7 @@ public class MapMain {
         radius=editArgs.radius;
         LinkedList<Cluster> clusters=getClusters(vectors);
         Vector[][] orderedClusters=buildLinks(clusters);
+
         LinkedList<Vector> orderedVectors=new LinkedList<>();
         for (int i = 0; i < orderedClusters.length; i++) {
             for (int j = 0; j < orderedClusters[i].length; j++) {
@@ -39,8 +40,8 @@ public class MapMain {
         return clusters;
     }
     private Vector[][] buildLinks(LinkedList<Cluster>clusters){
-        Vector orderedclusters[][]=new Vector[clusters.size()][];
-        int k=0;
+        Vector[][] orderedclusters =new Vector[clusters.size()][];
+        LinkedList<Vector[]>orderedList=new LinkedList<>();
         for (Cluster c :clusters) {
             int size=2*c.size();
             //System.out.println(size);
@@ -130,20 +131,132 @@ public class MapMain {
                     orderedVectors[i+1]=new Vector(ps,pe,false);
                 }
             }
-            if(k!=0){
-                 //need to add linking vector between this cluster and previous
-                //for that need to know last point in previous cluster
-                Point s=orderedclusters[k-1][orderedclusters[k-1].length-1].end;
-                Point e= orderedVectors[1].start;
-                orderedVectors[0]=new Vector(s,e,false);
-            }
-            orderedclusters[k++]=orderedVectors;
+            orderedList.add(orderedVectors);
         }
-        Point s=new Point(0,0,0,0);
-        Point e=orderedclusters[0][1].start;
-        orderedclusters[0][0]=new Vector(s,e,false);
+        //now we have orderedList with clusters of ordered vectors in it, we need to sort it, to minimalize our path
+        //let's create another cluster of vectors, which represents end and start of each cluster and create a minimal path
+        for (int i = 0; i < orderedList.size(); i++) {
+            orderedclusters[i]=orderedList.get(i);
+            if(i==0){
+                orderedclusters[i][0]=new Vector(new Point(0,0,0,0),new Point(0,0,0,0),false);
+            }else{
+                orderedclusters[i][0]=new Vector(orderedclusters[i-1][orderedclusters[i-1].length-1].end, orderedclusters[i][1].start,false);
+            }
+        }
+        sortClusters(orderedList);
         return orderedclusters;
     }
+
+    private Vector[][] sortClusters(LinkedList<Vector[]> orderedList) {
+        LinkedList<Vector> vectors=new LinkedList<>();
+        for (Vector[] v:orderedList) {
+            vectors.add(new Vector(v[1].start,v[v.length-1].end,true));
+        }
+        //created all vectors representing clusters
+        LinkedList<Branch> branches= new LinkedList<>();
+        boolean visited[]=new boolean[vectors.size()*2];
+        int vertex=0;
+        visited[vertex]=true;
+        while(hasUnvisited(visited)){
+            if(vertex%2==0&&!visited[vertex+1]||vertex%2!=0&&!visited[vertex-1]){//need to visit second point of vector
+                branches.add(new Branch(vertex, vertex%2==0?vertex+1:vertex-1)); //add to list of branches in tree
+                visited[vertex%2==0?vertex+1:vertex-1]=true; //visit next point
+                vertex=vertex%2==0?vertex+1:vertex-1; //change point
+            }else{
+                int minBranch=1_000_000;
+                int imin=-1;
+                int jmin=-1;
+                for (int i = 0; i < visited.length; i++) {//check every visited point for minimal branches
+                    if(visited[i]){
+                        for (int j = 0; j < visited.length; j++) { //find minimal branch
+                            if(!visited[j]){
+                                Point s;
+                                Point e;
+                                if(i%2==0){
+                                    if(j%2==0){
+                                        s=vectors.get(i/2).start;
+                                        e=vectors.get(j/2).start;
+                                    }else{
+                                        s=vectors.get(i/2).start;
+                                        e=vectors.get(j/2).end;
+                                    }
+                                }else{
+                                    if(j%2==0){
+                                        s=vectors.get(i/2).end;
+                                        e=vectors.get(j/2).start;
+                                    }else{
+                                        s=vectors.get(i/2).start;
+                                        e=vectors.get(j/2).end;
+                                    }
+                                }
+                                if(distance(s,e)<minBranch){
+                                    imin=i;
+                                    jmin=j;
+                                    minBranch=distance(s,e);
+                                }
+                            }
+                        }
+                    }
+                }
+                visited[jmin]=true; //visit point j
+                branches.add(new Branch(imin, jmin)); //add branch from imin to jmin
+                vertex=jmin; //change point
+            }
+        }
+        //now we have list branches with la-la-la
+        int startI=-1; //starting point (has only 1 branch)
+        for (int i = 0; i < visited.length; i++) {
+            int numOfbr=0;
+            for (Branch b : branches) {
+                if(b.I==i||b.J==i)numOfbr++;
+                if(numOfbr>1)break;
+            }
+            if (numOfbr==1){
+                startI=i; break;
+            }
+        }
+        //now let's walk recursevely
+        used=new boolean[visited.length];
+        path="";
+        walk(branches,  startI);
+        //System.out.println(path);
+        //now we have path between clusters, let's try it!
+        path=path.trim();
+
+        String pth[]=path.split(" ");
+            System.out.println(path);
+            for (String str :
+                    pth) {
+                System.out.print(str+" ");
+            }
+        Vector orderedVectors[]=new Vector[pth.length];
+        for (int i =0;i<pth.length-1;i++){
+            int s=Integer.parseInt(pth[i]);
+            int e=Integer.parseInt(pth[i+1]);
+            Vector vs=vectors.get(s/2);
+            Vector ve=vectors.get(e/2);
+            Point ps;
+            Point pe;
+            if(s%2==0){
+                ps=vs.start;
+            }else{
+                ps=vs.end;
+            }
+            if(e%2==0){
+                pe=ve.start;
+            }else{
+                pe=ve.end;
+            }
+            if(s%2==0&&s+1==e||s%2==1&&s-1==e||e%2==0&&e+1==s||e%2==1&&e-1==s){ //if s and e are in one cell (one vector)
+                orderedVectors[i+1]=new Vector(ps,pe,true);
+            }else{
+                orderedVectors[i+1]=new Vector(ps,pe,false);
+            }
+        }
+
+        return null;
+    }
+
     private boolean used[];
     private String path;
     private void walk(LinkedList<Branch> branches, int vertex){
