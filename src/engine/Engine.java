@@ -89,11 +89,15 @@ public class Engine implements Runnable {
                 unrenderedTime=0;
                 input.getPicture(picture);
                 if(picture.isNew){
-                edgMain.getEdges(picture, args.editArgs);
-                vecMain.getFigures(picture, args.editArgs);
-                map=mapMain.getMap(picture.vecImage, picture.vecImage.vectors, args.editArgs);
-                output.draw(map);
-                picture.debugRendered=false;
+                    edgMain.getEdges(picture, args.editArgs);
+                    vecMain.getFigures(picture, args.editArgs);
+                    map=mapMain.getMap(picture.vecImage, picture.vecImage.vectors, args.editArgs);
+                    double xScale = (Math.pow(2, args.outputArgs.sampleBits))/picture.rawImage.getWidth();
+                    double yScale = (Math.pow(2, args.outputArgs.sampleBits))/picture.rawImage.getHeight();
+                    System.out.println();
+                    System.out.println("factors " + xScale + " " + yScale);
+                    output.draw(map, Math.min(xScale, yScale));
+                    picture.debugRendered=false;
                 }
                 framesPassed++;
                 picture.isNew=false;

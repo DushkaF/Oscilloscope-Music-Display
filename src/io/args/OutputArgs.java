@@ -1,6 +1,8 @@
 package io.args;
 
 public class OutputArgs {
+    public double sampleBits = 8;   //TODO
+
     @Override
     public String toString() {
         return "OutputArgs{" +

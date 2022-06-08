@@ -1,16 +1,15 @@
-package output;
+package io.output;
 
-import java.io.*;
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.SourceDataLine;
 
 public class PlayThread extends Thread {
     SourceDataLine sourceDataLine;
     AudioInputStream audioInputStream;
-    PlayThread (SourceDataLine _sourceDataLine, AudioInputStream _audioInputStream) {
+    PlayThread(SourceDataLine _sourceDataLine, AudioInputStream _audioInputStream) {
         sourceDataLine = _sourceDataLine;
         audioInputStream = _audioInputStream;
     }
-
     byte tempBuffer[] = new byte[10000];
 
     public void run() {

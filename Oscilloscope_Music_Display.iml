@@ -10,5 +10,17 @@
     <orderEntry type="library" name="google.code.gson" level="project" />
     <orderEntry type="library" name="javadoc" level="project" />
     <orderEntry type="library" name="jsfml-test-Dec02_2013" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/../jsfml" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$MODULE_DIR$/../jsfml/javadoc" />
+        </JAVADOC>
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../jsfml" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
