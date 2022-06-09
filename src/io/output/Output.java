@@ -20,23 +20,23 @@ public class Output implements Runnable {
     }
 
     public void draw(LinkedList<Vector> map, double kFactor) {
-        System.out.println("k " + kFactor);
+        //System.out.println("k " + kFactor);
         for (Vector nextVector : map) {
             if (nextVector.visible) {
-                int startX = (int) ((double) nextVector.start.x * kFactor - Math.pow(2, outputArgs.sampleBits) / 2.0);
-                int startY = (int) (-(double) nextVector.start.y * kFactor + Math.pow(2, outputArgs.sampleBits) / 2.0);
-                int endX = (int) ((double) nextVector.end.x * kFactor - Math.pow(2, outputArgs.sampleBits) / 2.0);
-                int endY = (int) (-(double) nextVector.end.y * kFactor + Math.pow(2, outputArgs.sampleBits) / 2.0);
+                int startX = (int) ((double) nextVector.start.x * kFactor - Math.pow(2, outputArgs.sampleSizeInBits) / 2.0);
+                int startY = (int) (-(double) nextVector.start.y * kFactor + Math.pow(2, outputArgs.sampleSizeInBits) / 2.0);
+                int endX = (int) ((double) nextVector.end.x * kFactor - Math.pow(2, outputArgs.sampleSizeInBits) / 2.0);
+                int endY = (int) (-(double) nextVector.end.y * kFactor + Math.pow(2, outputArgs.sampleSizeInBits) / 2.0);
 
                 Point convertedStart = new Point(startX, startY, 0, 0);
                 Point convertedEnd = new Point(endX, endY, 0, 0);
-                System.out.println("[" + convertedStart.toString() + " " + convertedEnd.toString() + "] " + nextVector.visible);
+//                System.out.println("[" + convertedStart.toString() + " " + convertedEnd.toString() + "] " + nextVector.visible);
 
                 drawBresenhamLine(  convertedStart, convertedEnd);
             }
         }
 
-        createTone(50);
+        createTone(1);
         playAudio();
     }
 
@@ -60,29 +60,10 @@ public class Output implements Runnable {
     SourceDataLine sourceDataLine;
     LinkedList<int[]> outputReadyStream = new LinkedList<>();
 
-    private AudioFormat getAudioFormat() {
-        float sampleRate = 192000;
-        //8000,11025,16000,22050,44100
-        int sampleSizeInBits = 8; //TODO 16 bit
-        //8,16
-        int channels = 2;
-        //1,2
-        boolean signed = true;
-        //true,false
-        boolean bigEndian = false;
-        //true,false
-        return new AudioFormat(
-                sampleRate,
-                sampleSizeInBits,
-                channels,
-                signed,
-                bigEndian);
-    }
+
 
     private void createTone(float time) {
-        float rate = getAudioFormat().getSampleRate();
-        System.out.println(rate);
-        System.out.println("Time " + (rate * time / outputReadyStream.size()));
+        float rate = outputArgs.getAudioFormat().getSampleRate();
         for (int t = 0; t < (rate * time / outputReadyStream.size()); t++) {
             for (int[] nextPoint : outputReadyStream) {
                 byte[] buf = new byte[]{(byte) nextPoint[0], (byte) nextPoint[1]};
@@ -96,15 +77,14 @@ public class Output implements Runnable {
     private void drawBresenhamLine(Point start, Point end) {
         int x, y, dx, dy, incx, incy, pdx, pdy, es, el, err;
 
-        dx = end.x - start.x;//проекция на ось икс
-        dy = end.y - start.y;//проекция на ось игрек
+        dx = end.x - start.x;
+        dy = end.y - start.y;
 
         incx = (int) Math.signum(dx);
         incy = (int) Math.signum(dy);
 
-        if (dx < 0) dx = -dx;//далее мы будем сравнивать: "if (dx < dy)"
-        if (dy < 0) dy = -dy;//поэтому необходимо сделать dx = |dx|; dy = |dy|
-        //эти две строчки можно записать и так: dx = Math.abs(dx); dy = Math.abs(dy);
+        dx = Math.abs(dx);
+        dy = Math.abs(dy);
 
         if (dx > dy) {
             pdx = incx;
@@ -115,15 +95,15 @@ public class Output implements Runnable {
             pdx = 0;
             pdy = incy;
             es = dx;
-            el = dy;//тогда в цикле будем двигаться по y
+            el = dy;
         }
 
         x = start.x;
         y = start.y;
-        err = el / 2;
-        //все последующие точки возможно надо сдвигать, поэтому первую ставим вне цикла
         outputReadyStream.addLast(new int[]{x, y});
-        for (int t = 0; t < el; t++)//идём по всем точкам, начиная со второй и до последней
+
+        err = el / 2;
+        for (int t = 0; t < el; t++)
         {
             err -= es;
             if (err < 0) {
@@ -144,7 +124,7 @@ public class Output implements Runnable {
             byte audioData[] = byteArrayOutputStream.toByteArray();
             InputStream byteArrayInputStream = new ByteArrayInputStream(audioData);
 
-            AudioFormat audioFormat = getAudioFormat();
+            AudioFormat audioFormat = outputArgs.getAudioFormat();
             audioInputStream = new AudioInputStream(
                     byteArrayInputStream,
                     audioFormat,

@@ -224,10 +224,10 @@ public class MapMain {
         path=path.trim();
 
         String pth[]=path.split(" ");
-            System.out.println(path);
+//            System.out.println(path);   //TODO
             for (String str :
                     pth) {
-                System.out.print(str+" ");
+//                System.out.print(str+" ");
             }
         Vector orderedVectors[]=new Vector[pth.length];
         for (int i =0;i<pth.length-1;i++){
