@@ -70,7 +70,7 @@ public class Output implements Runnable {
                 byteArrayOutputStream.write(buf, 0, 2);
             }
         }
-        System.out.println("End form");
+       // System.out.println("End form");
     }
 
 

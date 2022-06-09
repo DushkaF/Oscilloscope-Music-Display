@@ -123,6 +123,8 @@ public class EditArgs {
                         return -1;
                     }
                     break;
+                default:
+                    return -1;
             }
         }
         return 0;
