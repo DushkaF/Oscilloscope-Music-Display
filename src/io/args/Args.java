@@ -3,11 +3,15 @@ package io.args;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import engine.Engine;
+import io.args.arg_type.DebugPictureType;
+import io.args.arg_type.PictureSource;
+import io.args.arg_type.PictureType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 public class Args {
 
@@ -92,8 +96,7 @@ public class Args {
             case "-d":
                 switch (debugArgs.command(message)){
                     case -1:
-                        System.out.println("Wrong command");
-                        System.out.println(help());
+                        System.out.println("Wrong command, to see list of command use: -hp");
                         break;
                     case 1:
                         engine.openDebug();
@@ -108,8 +111,7 @@ public class Args {
             case "-i":
               switch(inputArgs.command(message)) {
                 case -1:
-                    System.out.println("Wrong command");
-                    System.out.println(help());
+                    System.out.println("Wrong command, to see list of command use: -hp");
                     break;
                 case 1:
 
@@ -123,8 +125,7 @@ public class Args {
             case "-e":
                 switch(editArgs.command(message)) {
                     case -1:
-                        System.out.println("Wrong command");
-                        System.out.println(help());
+                        System.out.println("Wrong command, to see list of command use: -hp");
                         break;
                     case 1:
 
@@ -139,8 +140,7 @@ public class Args {
             case "-o":
                 switch(outputArgs.command(message)) {
                     case -1:
-                        System.out.println("Wrong command");
-                        System.out.println(help());
+                        System.out.println("Wrong command, to see list of command use: -hp");
                         break;
                     case 1:
 
@@ -222,8 +222,7 @@ public class Args {
                                 }
                                 break;
                             default:
-                                System.out.println("Wrong command");
-                                System.out.println(help());
+                                System.out.println("Wrong command, to see list of command use: -hp");
                                 break;
                         }
                 }
@@ -232,7 +231,31 @@ public class Args {
     }
 
     public String help() {
-        return "If you see this, then I forgot to do help message";
+        String help="List of commands:\n"
+                +"To load args from .json file use: "+"-l "+"i/o/e/d (inputArgs, outputArgs, editArgs or debugArgs)"+" 'path_to_.json_file(with name and extension)'\n"
+                +"To save args to .json file use: "+"-s "+"i/o/e/d (inputArgs, outputArgs, editArgs or debugArgs)"+" 'path_to_.json_file(without extension)'\n"
+                +"To change input args use: "+"-i \n"
+                +"\t path"+" 'path_to_file(with extension)' - to choose which file will be edited\n"
+                +"\t type"+ " +one from: "+Arrays.toString(PictureType.values())+" WARNING: ONLY RAW IS SUPPORTED --- to choose type (step of editing) of picture \n"
+                +"\t source"+ " +one from: "+Arrays.toString(PictureSource.values())+" WARNING: ONLY FILE IS SUPPORTED --- to choose where file will be uploaded/opened\n"
+                +"To change output args use: "+"-o \n"
+                +"\t sampleRate"+ " +one from: "+Arrays.toString(outputArgs.sampleRateList)+" --- to change sample rate\n"
+                +"\t sampleSize"+ " 8 or 16 --- to change sample size (in bits)\n"
+                +"To change edit args use: "+"-e \n"
+                +"\t k"+" 'int number from 0 to 100' --- to choose size of Gauss's kernel ((2k+1)*(2k+1))\n"
+                +"\t sigma"+" 'double number from 0.0001 to 100' --- to choose standard deviation\n"
+                +"\t highThrRat"+" 'double number from 0.0001 to 1' --- to choose threshold of high magnitude (in % from max magnitude)\n"
+                +"\t lowThrRat"+" 'double number from 0.0001 to 1' --- to choose threshold of low magnitude (in % from max magnitude)\n"
+                +"\t numOfHyst"+" 'int number from 1 to 100' --- to choose number of Hysteresis steps\n"
+                +"\t tau"+" 'double number from 0.0001 to 45' --- to choose error angle\n"
+                +"\t regMinSize"+" 'int number from 1 to 100000' --- to choose minimal size of region to detect\n"
+                +"\t radius"+" 'int number from 1 to 100' --- to choose max distance between vectors's ends in one cluster \n"
+                +"To change debug args use: "+"-d \n"
+                +"\t o"+" --- to open debug window\n"
+                +"\t o"+" +one from: "+Arrays.toString(DebugPictureType.values())+" 'int number from 1 to 3' --- to change which step of edit you want to see in quarter\n"
+                +"to close the program with autosave of args use: -ex"
+                ;
+        return help;
     }
 
     public String info() {

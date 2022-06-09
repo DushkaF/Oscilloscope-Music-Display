@@ -8,7 +8,7 @@ import static java.lang.Math.toRadians;
 
 public class OutputArgs {
     public float sampleRate;
-    private float sampleRateList[]={8000,11025,16000,22050,44100, 192000};
+    public float sampleRateList[]={8000,11025,16000,22050,44100, 192000};
     //{8000,11025,16000,22050,44100, 192000}
     public int sampleSizeInBits; //TODO 16 bit
     //8,16

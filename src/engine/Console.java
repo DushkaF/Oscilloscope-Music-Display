@@ -23,7 +23,7 @@ class Console implements Runnable {
                     case "-ex":
                         engine.running = false;
                         break;
-                    case "-h ":
+                    case "-hp":
                         System.out.println(engine.args.help());
                         break;
                     case "-i ":
@@ -38,12 +38,10 @@ class Console implements Runnable {
                         System.out.println(engine.args.info());
                         break;
                     default:
-                        System.out.println("Wrong command");
-                        System.out.println(engine.args.help());
+                        System.out.println("Wrong command, to see list of command use: -hp");
                 }
             } else {
-                System.out.println("Wrong command");
-                System.out.println(engine.args.help());
+                System.out.println("Wrong command, to see list of command use: -hp");
             }
         }
     }
