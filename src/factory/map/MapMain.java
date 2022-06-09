@@ -5,6 +5,7 @@ import factory.vectors.Vector;
 import factory.vectors.VectorPicture;
 import io.args.EditArgs;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static java.lang.Math.pow;
@@ -110,7 +111,7 @@ public class MapMain {
             }
             //now we have in links[i][j][k] distance between dots i and j, and visible they are or not (k==0?)
             //lets use prima to build tree
-            LinkedList<Branch> branches=buildTree(links);
+            ArrayList<Branch> branches=buildTree(links);
             //now we have minimal tree and we shall create path
             int startI=-1; //starting point (has only 1 branch)
             for (int i = 0; i < size; i++) {
@@ -235,9 +236,20 @@ public class MapMain {
         Vector[][] sortedClusters=new Vector[length][];
         for (int i = 0; i < length; i++) {
             int clSize=pathList.get(order[i]).length;
-            sortedClusters[i]=pathList.get(order[i]);
+
             for (int j = 0; j < clSize; j++) {
                // System.out.println(clSize+" "+j+" "+length+" "+ sortedClusters.length+" "+sortedClusters[i].length);
+                if(reverse[i]){
+                    sortedClusters[i]=new Vector[clSize];
+                    Vector[] v=pathList.get(order[i]);
+                    for (int k = 0; k < clSize; k++) {
+                        if(k!=0){
+                            sortedClusters[i][k]=v[clSize-k];
+                        }
+                    }
+                }else{
+                    sortedClusters[i]=pathList.get(order[i]);
+                }
                 if(j!=0&&reverse[i])sortedClusters[i][j].reverse();
             }
             if(i==0){
@@ -249,13 +261,12 @@ public class MapMain {
             }
             //sortedClusters[i][0]=new Vector(new Point(0,0,0,0),new Point(0,0,0,0),false);
         }
-
         return sortedClusters;
     }
 
     private boolean used[];
     private String path;
-    private void walk(LinkedList<Branch> branches, int vertex){
+    private void walk(ArrayList<Branch> branches, int vertex){
         path+=" "+vertex;
         used[vertex]=true;
         for (Branch b : branches) {
@@ -278,46 +289,41 @@ public class MapMain {
         }
     }
 
-    private LinkedList<Branch> buildTree(int links[][][]){
-        /*for (int i = 0; i < links.length; i++) {
-            for (int j = 0; j < links.length; j++) {
-                System.out.print(links[i][j][0]+"\t");
-            }
-            System.out.println();
-        }
-        System.out.println();*/
-        LinkedList<Branch> branches= new LinkedList<>();
-        boolean visited[]=new boolean[links.length];
-        int vertex=0;
-        visited[vertex]=true;
-        while(hasUnvisited(visited)){
-            if(vertex%2==0&&!visited[vertex+1]||vertex%2!=0&&!visited[vertex-1]){//need to visit second point of vector
-                branches.add(new Branch(vertex, vertex%2==0?vertex+1:vertex-1)); //add to list of branches in tree
-                visited[vertex%2==0?vertex+1:vertex-1]=true; //visit next point
-                vertex=vertex%2==0?vertex+1:vertex-1; //change point
-            }else{
-                int minBranch=1_000_000;
-                int imin=-1;
-                int jmin=-1;
-                for (int i = 0; i < visited.length; i++) {//check every visited point for minimal branches
-                    if(visited[i]){
-                        for (int j = 0; j < links.length; j++) { //find minimal branch
-                            if(!visited[j]&&links[i][j][0]!=-1){
-                                if(links[i][j][0]<minBranch){ //find minimal branch from visited i to unvisited j
-                                    minBranch=links[i][j][0];
-                                    imin=i;
-                                    jmin=j;
-                                }
-                            }
+    private ArrayList<Branch> buildTree(int links[][][]){
+        ArrayList<Branch> branches = new ArrayList<>(); // лучше использовать arraylist почти всегда
+        int n = links.length;
+        boolean visited[] = new boolean[links.length];
+        int vertex = 0;
+        visited[vertex] = true;
+
+        while (hasUnvisited(visited)){ // можно заменить на цикл for, в дереве ровно 2n - 1 ребро, если 2n вершин
+            int new_vertex = vertex % 2 == 0 ? vertex + 1 : vertex - 1;
+            // сразу считаем новую вершину, чтобы не дублировать стремное выражение
+            if (!visited[new_vertex]) { // need to visit second point of vector
+                branches.add(new Branch(vertex, new_vertex)); // add to list of branches in tree
+                visited[new_vertex] = true; // visit next point
+                vertex = new_vertex;
+            } else {
+                int minBranch = 1_000_000;
+                int imin = -1;
+                int jmin = -1;
+                for (int i = 0; i < visited.length; i++) { //check every visited point for minimal branches
+                    if (!visited[i]) continue; // заменил на отсечение по обратному условию, чтобы не было лишней вложенности кода
+                    for (int j = 0; j < links.length; j++) { // find minimal branch
+                        if (visited[j] || links[i][j][0] == -1) continue; // то же самое
+                        if (links[i][j][0] < minBranch) { // find minimal branch from visited i to unvisited j
+                            minBranch = links[i][j][0];
+                            imin = i;
+                            jmin = j;
                         }
                     }
                 }
-                visited[jmin]=true; //visit point j
-                branches.add(new Branch(imin, jmin)); //add branch from imin to jmin
-                vertex=jmin; //change point
+                visited[jmin] = true; // visit point j
+                branches.add(new Branch(imin, jmin)); // add branch from imin to jmin
+                vertex = jmin; // change point
             }
         }
-       return branches;
+        return branches;
     }
 
     static class Branch{
