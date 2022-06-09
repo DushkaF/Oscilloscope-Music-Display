@@ -1,1 +1,1 @@
-{"sampleBits":8.0,"isActive":false,"savePath":"saves/data.out"}
+{"sampleRate":192000.0,"sampleSizeInBits":8,"channels":2,"signed":true,"bigEndian":false,"isActive":false,"savePath":"saves/data.out"}
