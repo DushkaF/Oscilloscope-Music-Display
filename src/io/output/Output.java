@@ -20,7 +20,7 @@ public class Output implements Runnable {
     }
 
     public void draw(LinkedList<Vector> map, double kFactor) {
-        System.out.println("k " + kFactor);
+       // System.out.println("k " + kFactor);
         for (Vector nextVector : map) {
             if (nextVector.visible) {
                 int startX = (int) ((double) nextVector.start.x * kFactor - Math.pow(2, outputArgs.sampleBits) / 2.0);
@@ -30,14 +30,14 @@ public class Output implements Runnable {
 
                 Point convertedStart = new Point(startX, startY, 0, 0);
                 Point convertedEnd = new Point(endX, endY, 0, 0);
-                System.out.println("[" + convertedStart.toString() + " " + convertedEnd.toString() + "] " + nextVector.visible);
+                // System.out.println("[" + convertedStart.toString() + " " + convertedEnd.toString() + "] " + nextVector.visible);
 
                 drawBresenhamLine(  convertedStart, convertedEnd);
             }
         }
 
         createTone(50);
-        playAudio();
+    //    playAudio();
     }
 
     public OutputArgs getArgs() {
@@ -81,15 +81,15 @@ public class Output implements Runnable {
 
     private void createTone(float time) {
         float rate = getAudioFormat().getSampleRate();
-        System.out.println(rate);
-        System.out.println("Time " + (rate * time / outputReadyStream.size()));
+       //System.out.println(rate);
+       // System.out.println("Time " + (rate * time / outputReadyStream.size()));
         for (int t = 0; t < (rate * time / outputReadyStream.size()); t++) {
             for (int[] nextPoint : outputReadyStream) {
                 byte[] buf = new byte[]{(byte) nextPoint[0], (byte) nextPoint[1]};
                 byteArrayOutputStream.write(buf, 0, 2);
             }
         }
-        System.out.println("End form");
+       // System.out.println("End form");
     }
 
 

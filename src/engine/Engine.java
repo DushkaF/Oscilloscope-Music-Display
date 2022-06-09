@@ -94,8 +94,8 @@ public class Engine implements Runnable {
                     map=mapMain.getMap(picture.vecImage, picture.vecImage.vectors, args.editArgs);
                     double xScale = (Math.pow(2, args.outputArgs.sampleBits))/picture.rawImage.getWidth();
                     double yScale = (Math.pow(2, args.outputArgs.sampleBits))/picture.rawImage.getHeight();
-                    System.out.println();
-                    System.out.println("factors " + xScale + " " + yScale);
+                   // System.out.println();
+                  //  System.out.println("factors " + xScale + " " + yScale);
                     output.draw(map, Math.min(xScale, yScale));
                     picture.debugRendered=false;
                 }

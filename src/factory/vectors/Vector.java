@@ -25,6 +25,11 @@ public class Vector {
         this.visible=visible;
         angle=0.0;
     }
+    public void reverse(){
+        Point newStart=new Point(end.x,end.y,end.angle,end.magnitude);
+        end=start;
+        start=newStart;
+    }
     public Vector(int picHeight, int picWidth, int Cx,int Cy, double angle,double minL, double maxL,double width,boolean visible){
         //vector=new Vector2f(Cx+minL*sin(angle), )
         // Vector
