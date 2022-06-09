@@ -164,15 +164,15 @@ public class MapMain {
         }
         //now we have orderedList with clusters of ordered vectors in it, we need to sort it, to minimalize our path
         //let's create another cluster of vectors, which represents end and start of each cluster and create a minimal path
-        for (int i = 0; i < pathList.size(); i++) {
+        /*for (int i = 0; i < pathList.size(); i++) {
             orderedclusters[i]=pathList.get(i);
             if(i==0){
                 orderedclusters[i][0]=new Vector(new Point(0,0,0,0),new Point(0,0,0,0),false);
             }else{
                 orderedclusters[i][0]=new Vector(orderedclusters[i-1][orderedclusters[i-1].length-1].end, orderedclusters[i][1].start,false);
             }
-        } //linking clusters without sorting
-        //orderedclusters=sortClusters(pathList);
+        }*/ //linking clusters without sorting
+        orderedclusters=sortClusters(pathList);
         return orderedclusters;
     }
 
