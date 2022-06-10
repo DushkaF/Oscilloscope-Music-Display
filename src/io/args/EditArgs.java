@@ -47,7 +47,7 @@ public class EditArgs {
                     double high = -1;
                     try {
                         high = Double.parseDouble(ms[1]);
-                        if ( high < 0 ||  high > 100) return -1;
+                        if ( high < 0.0001 ||  high > 1) return -1;
                         highThresholdRatio =  high;
                     } catch (NumberFormatException e) {
                         return -1;
@@ -57,7 +57,7 @@ public class EditArgs {
                     double low = -1;
                     try {
                         low = Double.parseDouble(ms[1]);
-                        if (low< 0 || low > 100) return -1;
+                        if (low< 0.0001 || low > 1) return -1;
                         lowThresholdRatio = low;
                     } catch (NumberFormatException e) {
                         return -1;
@@ -67,7 +67,7 @@ public class EditArgs {
                     double sig = -1;
                     try {
                         sig = Double.parseDouble(ms[1]);
-                        if (sig < 0 || sig > 100) return -1;
+                        if (sig < 0.0001 || sig > 100) return -1;
                         sigma = sig;
                     } catch (NumberFormatException e) {
                         return -1;
@@ -77,7 +77,7 @@ public class EditArgs {
                     byte num = -1;
                     try {
                         num = Byte.parseByte(ms[1]);
-                        if (num < 0 || num > 100) return -1;
+                        if (num <= 0 || num > 100) return -1;
                         numOfHyst = num;
                     } catch (NumberFormatException e) {
                         return -1;
@@ -87,7 +87,7 @@ public class EditArgs {
                     double t = -1;
                     try {
                         t = Double.parseDouble(ms[1]);
-                        if (t < 0 || t > 45) return -1;
+                        if (t < 0.0001 || t > 45) return -1;
                         tau = toRadians(t);
                     } catch (NumberFormatException e) {
                         return -1;
@@ -97,7 +97,7 @@ public class EditArgs {
                     int rgm = -1;
                     try {
                         rgm = Integer.parseInt(ms[1]);
-                        if (rgm < 0 || rgm > 100000) return -1;
+                        if (rgm <= 0 || rgm > 100000) return -1;
                         regMinSize = rgm;
                     } catch (NumberFormatException e) {
                         return -1;
@@ -117,7 +117,7 @@ public class EditArgs {
                     int r = -1;
                     try {
                         r = Integer.parseInt(ms[1]);
-                        if (r <= 0 || r > 1000) return -1;
+                        if (r <= 0 || r > 100) return -1;
                         radius = r;
                     } catch (NumberFormatException e) {
                         return -1;
@@ -149,6 +149,7 @@ public class EditArgs {
                 ", tau=" + tau +
                 ", regMinSize=" + regMinSize +
                 ", numOfTries=" + numOfTries +
+                ", radius=" + radius +
                 '}';
     }
 }

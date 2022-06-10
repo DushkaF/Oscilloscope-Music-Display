@@ -16,7 +16,7 @@ public class Input {
         this.inputArgs=inputArgs;
         lastPath="";
     }
-
+    private boolean couldReadFromFile;
     public Picture getPicture(Picture picture) {
         switch (inputArgs.pictureSource){
             case FILE:
@@ -31,10 +31,12 @@ public class Input {
                                 picture.rawImage = ImageIO.read(file);
                                 lastPath= file.getPath();
                                 System.out.println("loaded raw image from file: "+file.getPath());
+                                couldReadFromFile=true;
                                 picture.isNew=true;
                             } catch (IOException e) {
                                 picture.rawImage=null;
-                                System.out.println("Couldn't load raw image from file:"+file.getPath());
+                                if(!couldReadFromFile) System.out.println("Couldn't load raw image from file:"+file.getPath());
+                                couldReadFromFile=false;
                             }
                         }
                         break;
@@ -46,9 +48,11 @@ public class Input {
                                 lastPath= file.getPath();
                                 System.out.println("loaded edged image from file: "+file.getPath());
                                 picture.isNew=true;
+                                couldReadFromFile=true;
                             } catch (IOException | ClassNotFoundException e) {
                                 picture.edgeImage=null;
-                                System.out.println("Couldn't load edged image from file:"+file.getPath());
+                                if(!couldReadFromFile)System.out.println("Couldn't load edged image from file:"+file.getPath());
+                                couldReadFromFile=false;
                             }
                         }
                         break;
@@ -60,9 +64,11 @@ public class Input {
                                 lastPath= file.getPath();
                                 System.out.println("loaded vectorized image from file: "+file.getPath());
                                 picture.isNew=true;
+                                couldReadFromFile=true;
                             } catch (IOException | ClassNotFoundException e) {
                                 picture.vecImage =null;
-                                System.out.println("Couldn't load vectorized image from file:"+file.getPath());
+                                if(!couldReadFromFile)System.out.println("Couldn't load vectorized image from file:"+file.getPath());
+                                couldReadFromFile=false;
                             }
                         }
                         break;
