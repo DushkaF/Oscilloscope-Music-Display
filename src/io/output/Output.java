@@ -75,7 +75,6 @@ public class Output implements Runnable {
             byte[] buf = new byte[]{(byte) nextPoint[0], (byte) nextPoint[1]};
             outputStream.write(buf, 0, 2);
         }
-        System.out.println("End form");
         return outputStream;
     }
 

@@ -1,1 +1,1 @@
-{"k":1,"sigma":0.3,"highThresholdRatio":0.2,"lowThresholdRatio":0.1,"numOfHyst":20,"tau":0.4363323129985824,"regMinSize":10,"numOfTries":0,"radius":5}
+{"k":2,"sigma":0.3,"highThresholdRatio":0.2,"lowThresholdRatio":0.1,"numOfHyst":20,"tau":0.39269908169872414,"regMinSize":15,"numOfTries":0,"radius":5}

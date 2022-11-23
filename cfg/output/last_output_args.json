@@ -1,1 +1,1 @@
-{"sampleRate":192000.0,"sampleSizeInBits":8,"channels":2,"signed":true,"bigEndian":false,"isActive":false,"savePath":"saves/data.out"}
+{"sampleRate":192000.0,"sampleRateList":[8000.0,11025.0,16000.0,22050.0,44100.0,192000.0],"sampleSizeInBits":8,"channels":2,"signed":true,"bigEndian":false,"savePath":"saves/data.out"}
